@@ -2,13 +2,9 @@ import json, sys
 
 USAGE_STRING = 'usage: jsonReader.py <file name>'
 def main(argv):
-"""
-This script reads in a user specified json file an attempts to spit out
-the user name field and the Tweet text.
-"""
-
     """
-    Grab a json file and read it.
+    This script reads in a user specified json file an attempts to spit out
+    the user name field and the Tweet text.
     """
     if len(sys.argv) == 2:
         fileName = argv[0]

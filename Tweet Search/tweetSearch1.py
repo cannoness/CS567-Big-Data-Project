@@ -1,9 +1,9 @@
-import json, sys, getopt
+import json, sys, argparse
 from twython import Twython
 
 
 KEY_FILE_NAME = 'start_codes.txt'
-USAGE_STRING = """usage: tweetSearch1.py -s <search term> -f <output file> \
+USAGE_STRING = """usage: tweetSearch1.py -q <search term> -f <output file> \
 [-n <number of tweets to get>]"""
 
 #this script will search twitter for user defined keywords.
@@ -15,42 +15,18 @@ def main(argv):
     number is 5.
 
     To run:
-    python tweetSearch1.py -s <search term> -f <output file> [-n <number of results>]
+    python tweetSearch1.py -q <search term> -f <output file> [-n <number of results>]
 
-    Required libraries: json, sys, getopt (default libs?)
+    Required libraries: json, sys, argparse
     Twython
 
     Built for Python 2.7.12
     Justin Thomas jthomas105@unm.edu
     """
-    searchTerm = ''
-    fileOut = ''
-    numHits = 5
-    try:
-        opts, args = getopt.getopt(argv, "hs:f:n:", 
-                                   ["searchTerm=", "fileOut=", "numTweets="])
-    #in case of argument errors.
-    except getopt.GetoptError:
-        argError()
-    for opt, arg in opts:
-        #collect provided arguments.
-        if opt in ("-s", "--searchTerm"):
-            searchTerm = arg
-        elif opt in ("-f", "--fileOut"):
-            fileOut = arg
-        #help option.
-        elif opt == '-h':
-            print USAGE_STRING
-            sys.exit()
-        #if number of tweets to get is provided.
-        elif opt in ("-n", "--numTweets"):
-            try:
-                numHits = int(arg)
-                if numHits < 1:
-                    argError()
-            except ValueError:
-                argError()
-
+    args = parseArguments()
+    searchTerm = args.q
+    fileOut = args.f
+    numHits = args.n
 
     """
     If searchTerm and fileOut have been entered properly.  Log in to twitter and 
@@ -66,8 +42,23 @@ def main(argv):
         argError()
 
 
+def parseArguments():
+    """
+    Argument parser using parsearg package.
+    """
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("-q", help="Your search terms.")
+    parser.add_argument("-f", default="output.json", help="Your output file.")
+    parser.add_argument("-n", default=5, type=int, help="The number of tweets to grab.")
+
+    args = parser.parse_args()
+    return args
+
+
 def argError():
     """
+    @deprecated
     If there was a problem with arguments, we go here.
     """
     print 'There was a problem with provided arguments.'
