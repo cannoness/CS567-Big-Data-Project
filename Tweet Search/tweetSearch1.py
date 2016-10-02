@@ -28,6 +28,10 @@ def main(argv):
     fileOut = args.f
     numHits = args.n
 
+    if args.q == None:
+        print "None"
+        searchTerm = "\s"
+
     """
     If searchTerm and fileOut have been entered properly.  Log in to twitter and 
     search for results.
