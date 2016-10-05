@@ -5,6 +5,7 @@
 
 #artifacts
 *~
+*.pyc
 
 #private local files/data
 *.txt

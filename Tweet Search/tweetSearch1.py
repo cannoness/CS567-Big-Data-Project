@@ -1,8 +1,9 @@
 import json, sys, argparse
+import loginScripts
 from twython import Twython
 
 
-KEY_FILE_NAME = 'start_codes.txt'
+KEY_FILE_NAME = 'keys1.json'
 USAGE_STRING = """usage: tweetSearch1.py -q <search term> -f <output file> \
 [-n <number of tweets to get>]"""
 
@@ -37,14 +38,13 @@ def main(argv):
     search for results.
     """
     if searchTerm and fileOut:
-        twitter = login()
+        twitter = loginScripts.searchLogin(KEY_FILE_NAME)
         results = twitter.search(q=searchTerm, count=numHits)
         f = open(fileOut, 'w')
         #write the tweet portion of the search out to a file.
         f.write(json.dumps(results['statuses']))
     else:
         argError()
-
 
 def parseArguments():
     """
@@ -62,14 +62,18 @@ def parseArguments():
 
 def argError():
     """
-    @deprecated
     If there was a problem with arguments, we go here.
     """
     print 'There was a problem with provided arguments.'
     print USAGE_STRING
     sys.exit(2)
 
+
 def login():
+    #
+    #@deprecated
+    # Using login from loginScripts.py
+    #
     """
     Login method reads in the App key and access token from the appropriate textfile.
     The text file must be formatted so that the app key is on the first line and
