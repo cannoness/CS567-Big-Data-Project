@@ -1,4 +1,5 @@
 from MyStreamer import MyStreamer
+from IDWriter import IDWriter
 from twython import Twython
 from collections import deque
 import loginScripts
@@ -14,19 +15,6 @@ import json
 KEY_FILE_NAME = 'keys1.json'
 #string creating bounding box around NYC
 LOC_NYC = '-74,40,-73,41'
-
-def processTweets(tweetQueue):
-    """
-    Grab tweets from queue and write out.
-    TODO make turn offable.
-    TODO sleep while off?
-    """
-    fileOut = open('tweetNames.csv', 'w')
-    while True:
-        if(len(tweetQueue) > 0):
-            fileOut.write(tweetQueue.popleft())
-            fileOut.write(',')
-    fileOut.close()
     
 def main(argv):
     """
@@ -37,6 +25,8 @@ def main(argv):
     #the processing end will take tweets and write to output.
     #make two threads, main thread will run streamer, second thread will process tweets.
     tweetQueue = deque()
+    #TODO, make thread to write on
+    writer = IDWriter(tweetQueue)
     #Currently streaming from NYC, no search terms.
     streamer = loginScripts.streamLogin(KEY_FILE_NAME, tweetQueue)
     streamer.statuses.filter(locations=LOC_NYC)
