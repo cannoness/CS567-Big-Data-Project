@@ -8,7 +8,8 @@ class IDWriter:
 
     def __init__(self, tweetQ):
         """
-        Constructor for IDWriter.
+        Constructor for IDWriter.  Saves a reference to the deque that user id strings
+        are put in to
         @param tweetQ deque that user IDs will come in through.
         """
         self.tweetQueue = tweetQ
@@ -18,6 +19,7 @@ class IDWriter:
         Grab an ID from tweetQueue and write out, should be run on a separate thread.
         TODO make turn offable.
         TODO sleep while off?
+        TODO backup periodically?
         """
         fileOut = open(fileName, 'w')
         while True:

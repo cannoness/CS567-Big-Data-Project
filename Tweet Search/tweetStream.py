@@ -17,9 +17,17 @@ KEY_FILE_NAME = 'keys1.json'
 OUTPUT_FILE_NAME = 'ids.csv'
 #string creating bounding box around NYC
 LOC_NYC = '-74,40,-73,41'
-def startStream(tweetQ):
+def startStream(tweetQ, loc=LOC_NYC):
+    """
+    This method creates a MyStreamer object and starts streaming from twitter.
+    This method should be called as the target of a thread.
+    @param tweetQ deque that is passed on to the MyStreamer constructor to be used to
+                  collect streams as they come in.
+    @param loc String string constructing bounding box of areas to stream from. Default
+                  to NEW YAWK CITEH!?!?!?
+    """
     streamer = loginScripts.streamLogin(KEY_FILE_NAME, tweetQ)
-    streamer.statuses.filter(locations=LOC_NYC)
+    streamer.statuses.filter(locations=loc)
     
 
 def main(argv):
@@ -28,16 +36,20 @@ def main(argv):
     area.
     """
     #The deque will be sent to the streamer object to collect tweets.
-    #the processing end will take tweets and write to output.
-    #make two threads, main thread will run streamer, second thread will process tweets.
     tweetQueue = deque()
-    #TODO, make thread to write on
+
+    #ID writer will handle writing tweets to output file.
     writer = IDWriter(tweetQueue)
+
+    #the twitter stream goes on its own thread.
     tweetStream = Thread(target=startStream, args=(tweetQueue,))
+    #set daemon flag to true, this will cause thread to stop when python exits.
     tweetStream.daemon = True
     tweetStream.start()
+
+    #with stream started, begin writing output files.
     writer.writeIDs(OUTPUT_FILE_NAME)
-    #Currently streaming from NYC, no search terms.
+
     
 
 if __name__ == "__main__":
