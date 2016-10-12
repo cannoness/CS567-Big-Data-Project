@@ -14,6 +14,20 @@ import json
 KEY_FILE_NAME = 'keys1.json'
 #string creating bounding box around NYC
 LOC_NYC = '-74,40,-73,41'
+
+def processTweets(tweetQueue):
+    """
+    Grab tweets from queue and write out.
+    TODO make turn offable.
+    TODO sleep while off?
+    """
+    fileOut = open('tweetNames.csv', 'w')
+    while True:
+        if(len(tweetQueue) > 0):
+            fileOut.write(tweetQueue.popleft())
+            fileOut.write(',')
+    fileOut.close()
+    
 def main(argv):
     """
     Hook up to twitter streaming api and grab all tweets comming from a given

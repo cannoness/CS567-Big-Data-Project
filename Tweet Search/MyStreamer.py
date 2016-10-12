@@ -21,7 +21,7 @@ class MyStreamer(TwythonStreamer):
         When the streamer gets a success code, do this.
         """
         if 'text' in data:
-            self.tweetQueue.append(data)
+            self.tweetQueue.append(data['user']['id_str'])
             #TODO remove prints.
             print json.dumps(data['user']['name'])
             print json.dumps(data['text'])
