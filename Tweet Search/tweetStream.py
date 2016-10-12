@@ -19,6 +19,8 @@ def main(argv):
     Hook up to twitter streaming api and grab all tweets comming from a given
     area.
     """
+    #The deque will be sent to the streamer object to collect tweets.
+    #the processing end will take tweets and write to output.
     tweetQueue = deque()
     #Currently streaming from NYC, no search terms.
     streamer = loginScripts.streamLogin(KEY_FILE_NAME, tweetQueue)
