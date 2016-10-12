@@ -1,4 +1,5 @@
 from twython import TwythonStreamer
+from collections import deque
 import json
 
 class MyStreamer(TwythonStreamer):
@@ -11,17 +12,19 @@ class MyStreamer(TwythonStreamer):
     10/05/2016
     """
 
-    def __init__(self, appKey, appSecret, oauthToken, oauthSecret):
+    def __init__(self, appKey, appSecret, oauthToken, oauthSecret, tweetQ=None):
         super(MyStreamer, self).__init__(appKey, appSecret, oauthToken, oauthSecret)
+        self.tweetQueue = tweetQ
 
     def on_success(self, data):
+        """
+        When the streamer gets a success code, do this.
+        """
         if 'text' in data:
+            self.tweetQueue.append(data)
+            #TODO remove prints.
             print json.dumps(data['user']['name'])
             print json.dumps(data['text'])
-            #fileOut = open('testOut.json', 'w')
-            #fileOut.write(json.dumps(data))
-            #fileOut.close()
-            #self.disconnect()
 
     def on_error(self, status_code, data):
         print status_code, data

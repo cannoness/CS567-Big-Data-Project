@@ -16,10 +16,12 @@ CONSUMER_KEY = 'consumerKey'
 CONSUMER_SECRET = 'consumerSecret'
 ACCESS_TOKEN = 'accessToken'
 
-def streamLogin(KEY_FILE_NAME):
+def streamLogin(KEY_FILE_NAME, tweetQ):
     """
     Login to twitter, authorize and return MyStreamer, twitter streaming object.
     @param KEY_FILE_NAME String: Name of file containing the consumer key and secret.
+    @param tweetQ: Deque for holding incomming tweets awaiting processing.  This is
+                   to be passed along to the streaming object.
     @return MyStreamer object, extends TwythonStreamer
     """
 
@@ -45,7 +47,7 @@ def streamLogin(KEY_FILE_NAME):
     OAUTH_TOKEN = finalStep['oauth_token']
     OAUTH_SECRET = finalStep['oauth_token_secret']
 
-    return MyStreamer(APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_SECRET)
+    return MyStreamer(APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_SECRET, tweetQ)
 
 def searchLogin(KEY_FILE_NAME):
     """

@@ -1,5 +1,6 @@
 from MyStreamer import MyStreamer
 from twython import Twython
+from collections import deque
 import loginScripts
 import sys
 import json
@@ -18,8 +19,9 @@ def main(argv):
     Hook up to twitter streaming api and grab all tweets comming from a given
     area.
     """
+    tweetQueue = deque()
     #Currently streaming from NYC, no search terms.
-    streamer = loginScripts.streamLogin(KEY_FILE_NAME)
+    streamer = loginScripts.streamLogin(KEY_FILE_NAME, tweetQueue)
     streamer.statuses.filter(locations=LOC_NYC)
 
 if __name__ == "__main__":
