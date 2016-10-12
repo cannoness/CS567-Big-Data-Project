@@ -13,7 +13,7 @@ class IDWriter:
         """
         self.tweetQueue = tweetQ
 
-    def writeIDs(fileName):
+    def writeIDs(self, fileName):
         """
         Grab an ID from tweetQueue and write out, should be run on a separate thread.
         TODO make turn offable.
@@ -21,7 +21,7 @@ class IDWriter:
         """
         fileOut = open(fileName, 'w')
         while True:
-            if(len(tweetQueue) > 0):
-                fileOut.write(tweetQueue.popleft())
+            if(len(self.tweetQueue) > 0):
+                fileOut.write(self.tweetQueue.popleft())
                 fileOut.write(',')
         fileOut.close()

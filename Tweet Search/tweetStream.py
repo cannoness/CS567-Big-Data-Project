@@ -2,6 +2,7 @@ from MyStreamer import MyStreamer
 from IDWriter import IDWriter
 from twython import Twython
 from collections import deque
+from threading import Thread
 import loginScripts
 import sys
 import json
@@ -13,9 +14,14 @@ import json
 #
 
 KEY_FILE_NAME = 'keys1.json'
+OUTPUT_FILE_NAME = 'ids.csv'
 #string creating bounding box around NYC
 LOC_NYC = '-74,40,-73,41'
+def startStream(tweetQ):
+    streamer = loginScripts.streamLogin(KEY_FILE_NAME, tweetQ)
+    streamer.statuses.filter(locations=LOC_NYC)
     
+
 def main(argv):
     """
     Hook up to twitter streaming api and grab all tweets comming from a given
@@ -27,9 +33,12 @@ def main(argv):
     tweetQueue = deque()
     #TODO, make thread to write on
     writer = IDWriter(tweetQueue)
+    tweetStream = Thread(target=startStream, args=(tweetQueue,))
+    tweetStream.daemon = True
+    tweetStream.start()
+    writer.writeIDs(OUTPUT_FILE_NAME)
     #Currently streaming from NYC, no search terms.
-    streamer = loginScripts.streamLogin(KEY_FILE_NAME, tweetQueue)
-    streamer.statuses.filter(locations=LOC_NYC)
+    
 
 if __name__ == "__main__":
     main(sys.argv[1:])
