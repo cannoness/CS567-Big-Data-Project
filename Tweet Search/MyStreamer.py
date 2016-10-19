@@ -28,9 +28,8 @@ class MyStreamer(TwythonStreamer):
         """
         if 'text' in data:
             self.tweetQueue.append(data['user']['id_str'])
-            #TODO remove prints.
-            print json.dumps(data['user']['name'])
-            print json.dumps(data['text'])
+            #print json.dumps(data['user']['name'])
+            #print json.dumps(data['text'])
 
     def on_error(self, status_code, data):
         """
