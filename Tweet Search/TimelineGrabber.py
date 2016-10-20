@@ -10,13 +10,23 @@ class TimelineGrabber():
     TODO make custom timer
     """
 
-    def __init__(self):
+    def __init__(self, tickInterval=2.0, grabInterval=15):
         """
         Constructor instatiates class.
         Members:
-        minutesSinceLast.  Number of minutes since last tick.
+        int minutesSinceLast:  Number of ticks since last timeline grab.
+        int grabInterval: Number of minutes between grabs.
+        float tickLength: Number of seconds per tick.
+        bool isDone: Flag to set when done grabbing tweets.
+        int numGrabs: Number of grabs made so far
+        int maxGrabs: Number of sets of grabs to make.
+
+        @param float tickInterval Clock ticks every tickInterval seconds.
+        @param int grabInterval Number of clock ticks between timeline grabs.
         """
-        self.minutesSinceLast = 15
+        self.minutesSinceLast = grabInterval
+        self.grabInterval = grabInterval
+        self.tickLength = tickInterval
         self.clock = None
         self.isDone = False
         self.numGrabs = 0
@@ -24,19 +34,19 @@ class TimelineGrabber():
         
     def startTimer(self):
         """
-        Start the timer.
+        Method to call to start timer.
         """
         self.clockTick()
         
     def clockTick(self):
         """
         This method gets called when there is a clock tick.  Timeline grabber decides if
-        it is time to grab again or prints heartbeat.
+        it is time to grab again.  If it is not, it prints a heartbeat.
         """
  
         
-        if self.minutesSinceLast == 15:
-            #grab timelines
+        if self.minutesSinceLast == self.grabInterval:
+            #reset minutes since last, increment number of grabs, call check if done.
             self.minutesSinceLast = 0
             self.numGrabs += 1
             self.checkIfDone()
@@ -45,9 +55,9 @@ class TimelineGrabber():
             self.minutesSinceLast += 1
             print self.minutesSinceLast, " minutes since last grab."
 
-        #reset timer and restart.
+        #If not done reset timer and restart.
         if not self.isDone:
-            self.clock = Timer(2.0, self.clockTick)
+            self.clock = Timer(self.tickLength, self.clockTick)
             self.clock.start()
 
     def checkIfDone(self):
