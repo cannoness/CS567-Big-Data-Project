@@ -2,6 +2,7 @@
 #contains a timer.
 
 from threading import Timer
+import loginScripts
 
 class TimelineGrabber():
     """
@@ -20,6 +21,7 @@ class TimelineGrabber():
         bool isDone: Flag to set when done grabbing tweets.
         int numGrabs: Number of grabs made so far
         int maxGrabs: Number of sets of grabs to make.
+        Twython twyLink: object that will be used to access Twitter timelines
 
         @param float tickInterval Clock ticks every tickInterval seconds.
         @param int grabInterval Number of clock ticks between timeline grabs.
@@ -31,20 +33,26 @@ class TimelineGrabber():
         self.isDone = False
         self.numGrabs = 0
         self.maxGrabs = 5 #temporary for testing right now.
+        self.twyLink = None
         
     def startTimer(self):
         """
         Method to call to start timer.
         """
         self.clockTick()
+
+    def login(keyFileName):
+        """
+        Login to twitter and get a Twython object
+        @param keyFileName Name of the file to login with.
+        """
+        self.twyLink = loginScripts.searchLogin(keyFileName)
         
     def clockTick(self):
         """
         This method gets called when there is a clock tick.  Timeline grabber decides if
         it is time to grab again.  If it is not, it prints a heartbeat.
-        """
- 
-        
+        """        
         if self.minutesSinceLast == self.grabInterval:
             #reset minutes since last, increment number of grabs, call check if done.
             self.minutesSinceLast = 0
