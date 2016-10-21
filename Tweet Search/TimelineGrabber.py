@@ -58,16 +58,18 @@ class TimelineGrabber():
         #TODO get ids
         return ids
         
-    def getTimelines(ls):
+    def getTimelines(ls, twitter):
         """
         TODO
         This method grabs timelines for each user in ls
         Will return data as a list of timelines.
+        @param ls list of strings to get user timeline from.
         """
         data = []
         for user in ls:
             #user.toInt
             #get Timeline
+            #data.append(twitter.get_user_timeline(user_id=int(user), count=20)) Check when twitter is back up.
             print "Getting timeline ", user #TODO remove
         return data
 
