@@ -1,8 +1,6 @@
-#this is a class
-#contains a timer.
-
 from threading import Timer
 import loginScripts
+import sys, json
 
 class TimelineGrabber():
     """
@@ -41,13 +39,46 @@ class TimelineGrabber():
         """
         self.clockTick()
 
-    def login(keyFileName):
+    def login():
         """
+        TODO
         Login to twitter and get a Twython object
         @param keyFileName Name of the file to login with.
         """
-        self.twyLink = loginScripts.searchLogin(keyFileName)
+        #get keyFileName
+        return loginScripts.searchLogin(keyFileName)
+
+    def getSearchList():
+        """
+        TODO
+        this method returns a list of user names to search for on this grab.
+        Should be no larger than 300
+        """
+        ids = []
+        #TODO get ids
+        return ids
         
+    def getTimelines(ls):
+        """
+        TODO
+        This method grabs timelines for each user in ls
+        Will return data as a list of timelines.
+        """
+        data = []
+        for user in ls:
+            #user.toInt
+            #get Timeline
+            print "Getting timeline ", user #TODO remove
+        return data
+
+    def writeData(data):
+        """
+        TODO
+        Dump data into json
+        """
+        outStr = json.dumps(data)
+        #write file.
+    
     def clockTick(self):
         """
         This method gets called when there is a clock tick.  Timeline grabber decides if
@@ -57,6 +88,10 @@ class TimelineGrabber():
             #reset minutes since last, increment number of grabs, call check if done.
             self.minutesSinceLast = 0
             self.numGrabs += 1
+            #twitter = login()
+            #users = getSearchList()
+            #data = getTimelines(users)
+            #writeData(data)
             self.checkIfDone()
             print "Grabbing timelines"
         else:
