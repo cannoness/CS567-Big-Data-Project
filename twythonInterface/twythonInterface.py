@@ -33,3 +33,12 @@ def streamIDsTo(fileOut=DEFAULT_FILE_OUT, loc=LOC_NYC):
     tweetStream.start()
 
     writer.writeIDs(WRITE_PATH + fileOut)
+
+def grabTimelines():
+    #grab timelines given list of user ids
+    twitter = tu.searchLogin(KEY_FILE_NAME)
+    #returns data as list of tweets
+    data = twitter.get_user_timeline(user_id=391170079, count=3)
+    for tweet in data:
+        print tweet['text']
+    output.writeJson(WRITE_PATH + 'timeline.json', data)
