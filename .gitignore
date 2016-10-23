@@ -6,6 +6,9 @@
 #artifacts
 *~
 *.pyc
+*.o
+*.out
+*.exe
 
 #private local files/data
 *.txt
