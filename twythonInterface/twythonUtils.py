@@ -121,7 +121,7 @@ class TimelineGrabber():
     TODO make custom timer
     """
 
-    def __init__(self, tickInterval=2.0, grabInterval=15):
+    def __init__(self, tickInterval=1.0, grabInterval=5):
         """
         Constructor instatiates class.
         Members:
@@ -142,11 +142,13 @@ class TimelineGrabber():
         self.clock = None
         self.isDone = False
         self.numGrabs = 0
-        self.maxGrabs = 5 #temporary for testing right now.
+        self.maxGrabs = 1 #temporary for testing right now.
         self.usersPerGrab = 3
+        self.tweetsPerUser = 3
         self.fileIn = None
         self.fileOut = None
-        self.grabsMade = 0
+        self.keyFileName = None
+
 
     def setFileInName(self, stringIn):
         self.fileIn = stringIn
@@ -164,19 +166,23 @@ class TimelineGrabber():
         @param keyFileName Name of the file to login with.
         """
         #get keyFileName
-        return searchLogin(keyFileName)
+        return searchLogin(self.keyFileName)
 
     def getSearchList(self):
         """
-        TODO
         this method returns a list of user names to search for on this grab.
         Should be no larger than 300
+        @return list of user ids to get timelines from
         """
         ids = []
-        #TODO get ids
         f = open(self.fileIn, 'r')
-        startAt = self.grabsMade * self.usersPerGrab
-        for _ in xrange(startAt + self.usersPerGrab):
+        startAt = self.numGrabs * self.usersPerGrab
+        
+        #skip ids that have already been read.
+        for _ in xrange(startAt):
+            f.readline()
+        #make list of user ids to get timelines from.    
+        for _ in xrange(self.usersPerGrab):
             ids.append((f.readline()).rstrip())
         return ids
         
@@ -189,10 +195,9 @@ class TimelineGrabber():
         """
         data = []
         for user in ls:
-            #user.toInt
-            #get Timeline
-            #data.append(twitter.get_user_timeline(user_id=int(user), count=20)) Check when twitter is back up.
-            print "Getting timeline ", user #TODO remove
+            timeline = twitter.get_user_timeline(user_id=user, count=3)
+            data.append((user, timeline))
+
         return data
 
     def clockTick(self):
@@ -203,13 +208,17 @@ class TimelineGrabber():
         if self.minutesSinceLast == self.grabInterval:
             #reset minutes since last, increment number of grabs, call check if done.
             self.minutesSinceLast = 0
-            self.numGrabs += 1
-            twitter = login()
-            users = getSearchList()
-            data = getTimelines(users, twitter)
+
+            twitter = self.login()
+            users = self.getSearchList()
+            #TODO work on getTimelines
+            data = self.getTimelines(users, twitter)
+
             #writeData(data)
             self.checkIfDone()
             print "Grabbing timelines"
+            print users
+            self.numGrabs += 1
         else:
             self.minutesSinceLast += 1
             print self.minutesSinceLast, " minutes since last grab."

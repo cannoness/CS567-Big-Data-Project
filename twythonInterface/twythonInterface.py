@@ -40,13 +40,13 @@ def grabTimelines(ids='uniqueN.txt', fileOut='timeline'):
     usrID = '731609412004155392'
     twitter = tu.searchLogin(KEY_FILE_NAME)
     #returns data as list of tweets
-    data = twitter.get_user_timeline(user_id=usrID, count=3)
     for tweet in data:
         print tweet['text']
     output.writeJson(WRITE_PATH + 'timeline.json', data)
     """
-    timeLineGrabber = tu.TimelineGrabber()
-    timeLineGrabber.fileIn = WRITE_PATH + ids
-    ids = timeLineGrabber.getSearchList()
-    for i in ids:
-        print i
+    tlg = tu.TimelineGrabber()
+    tlg.fileIn = WRITE_PATH + ids
+    tlg.fileOut = WRITE_PATH + fileOut
+    tlg.keyFileName = KEY_FILE_NAME
+    
+    tlg.startTimer()
