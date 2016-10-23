@@ -1,0 +1,2 @@
+#Start python in interactive mode with twythonInterface already imported.
+python -i tiStarter.py

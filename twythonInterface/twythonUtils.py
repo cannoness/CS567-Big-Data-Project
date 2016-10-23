@@ -143,6 +143,13 @@ class TimelineGrabber():
         self.isDone = False
         self.numGrabs = 0
         self.maxGrabs = 5 #temporary for testing right now.
+        self.usersPerGrab = 3
+        self.fileIn = None
+        self.fileOut = None
+        self.grabsMade = 0
+
+    def setFileInName(self, stringIn):
+        self.fileIn = stringIn
         
     def startTimer(self):
         """
@@ -167,6 +174,10 @@ class TimelineGrabber():
         """
         ids = []
         #TODO get ids
+        f = open(self.fileIn, 'r')
+        startAt = self.grabsMade * self.usersPerGrab
+        for _ in xrange(startAt + self.usersPerGrab):
+            ids.append((f.readline()).rstrip())
         return ids
         
     def getTimelines(self, ls, twitter):
@@ -193,9 +204,9 @@ class TimelineGrabber():
             #reset minutes since last, increment number of grabs, call check if done.
             self.minutesSinceLast = 0
             self.numGrabs += 1
-            #twitter = login()
-            #users = getSearchList()
-            #data = getTimelines(users)
+            twitter = login()
+            users = getSearchList()
+            data = getTimelines(users, twitter)
             #writeData(data)
             self.checkIfDone()
             print "Grabbing timelines"
