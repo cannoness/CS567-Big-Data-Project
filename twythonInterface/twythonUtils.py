@@ -193,10 +193,13 @@ class TimelineGrabber():
         Will return data as a list of timelines.
         @param ls list of strings to get user timeline from.
         """
-        data = []
+        data = {}
         for user in ls:
             timeline = twitter.get_user_timeline(user_id=user, count=3)
-            data.append((user, timeline))
+            text = []
+            for tweet in timeline:
+                text.append(tweet['text'])
+            data[user] = text
 
         return data
 
@@ -213,6 +216,9 @@ class TimelineGrabber():
             users = self.getSearchList()
             #TODO work on getTimelines
             data = self.getTimelines(users, twitter)
+
+            for usr in data:
+                print data[usr]
 
             #writeData(data)
             self.checkIfDone()
