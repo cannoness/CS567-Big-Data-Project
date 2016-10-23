@@ -10,9 +10,9 @@ DEFAULT_FILE_OUT = 'data.json'
 
 LOC_NYC = '-74,40,-73,41'
     
-def searchForTerms(term=' ', count=5, writePath=DEFAULT_FILE_OUT):
+def searchForTerms(term=' ', count=5, fileName=DEFAULT_FILE_OUT):
     """
-    Search twitter for a term
+    Search twitter for a term.  Output json to output/fileName.
     @param term String query.
     @param count int number of results to return.
     @param writePath String path and filename to write to.
@@ -21,14 +21,14 @@ def searchForTerms(term=' ', count=5, writePath=DEFAULT_FILE_OUT):
     results = twitter.search(q=term, count=count)
     writeJson(WRITE_PATH + writePath, results['statuses'])
 
-def streamIDsTo(fileOut=DEFAULT_FILE_OUT):
+def streamIDsTo(fileOut=DEFAULT_FILE_OUT, loc=LOC_NYC):
     """
-    Stream user ids to a file.
+    Stream user ids to output/fileOut
     """
     #stream python ids
     tweetQ = deque()
     writer = output.IDWriter(tweetQ)
-    tweetStream = Thread(target=tu.startLocStream, args=(tweetQ, LOC_NYC, KEY_FILE_NAME))
+    tweetStream = Thread(target=tu.startLocStream, args=(tweetQ, loc, KEY_FILE_NAME))
     tweetStream.daemon = True
     tweetStream.start()
 
