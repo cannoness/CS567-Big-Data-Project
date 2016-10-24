@@ -3,6 +3,7 @@ from twython import TwythonStreamer
 from collections import deque
 from threading import Thread
 from threading import Timer
+import ioModule as output
 import json, sys
 
 
@@ -118,7 +119,6 @@ class TimelineGrabber():
     """
     Instances of this class grab a users timeline and writes out then sleeps for 15
     minutes.
-    TODO make custom timer
     """
 
     def __init__(self, tickInterval=1.0, grabInterval=5):
@@ -187,20 +187,27 @@ class TimelineGrabber():
         
     def getTimelines(self, ls, twitter):
         """
-        TODO
         This method grabs timelines for each user in ls
         Will return data as a list of timelines.
         @param ls list of strings to get user timeline from.
         """
         data = {}
         for user in ls:
-            timeline = twitter.get_user_timeline(user_id=user, count=3)
-            text = []
+            timeline = twitter.get_user_timeline(user_id=user, count=self.tweetsPerUser)
+            tweets = []
             for tweet in timeline:
-                text.append(tweet['text'])
-            data[user] = text
+                tweets.append(tweet)
+                print tweet['text']
+            data[user] = tweets
 
         return data
+
+    def writeData(self, data):
+        """
+        write data to json
+        """
+        path = self.fileOut + str(self.numGrabs) + '.json'
+        output.writeJson(path, data)
 
     def clockTick(self):
         """
@@ -213,17 +220,12 @@ class TimelineGrabber():
 
             twitter = self.login()
             users = self.getSearchList()
-            #TODO work on getTimelines
             data = self.getTimelines(users, twitter)
 
-            for usr in data:
-                print usr
-                print data[usr]
-
-            #writeData(data)
+            self.writeData(data)
             self.checkIfDone()
             print "Grabbing timelines"
-            print users
+
             self.numGrabs += 1
         else:
             self.minutesSinceLast += 1

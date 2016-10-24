@@ -35,10 +35,15 @@ def streamIDsTo(fileOut=DEFAULT_FILE_OUT, loc=LOC_NYC):
     writer.writeIDs(WRITE_PATH + fileOut)
 
 def grabTimelines(ids='uniqueN.txt', fileOut='timeline'):
+    """
+    Begin timeline grabbing.
+    @input string name of file of ids.
+    @param string output filename without extension.
+    """
 
     tlg = tu.TimelineGrabber()
     tlg.fileIn = WRITE_PATH + ids
-    tlg.fileOut = WRITE_PATH + fileOut
+    tlg.fileOut = WRITE_PATH + 'timelines/' + fileOut
     tlg.keyFileName = KEY_FILE_NAME
     
     tlg.startTimer()
