@@ -34,17 +34,35 @@ def streamIDsTo(fileOut=DEFAULT_FILE_OUT, loc=LOC_NYC):
 
     writer.writeIDs(WRITE_PATH + fileOut)
 
-def grabTimelines(ids='uniqueN.txt', fileOut='timeline'):
+def runTimelineGrabber(inFile='uniqueN.txt', outFile='timeline', testing=False):
+    """
+    Use this for a live run of the timeline grabber.  Just for convenience.
+    @param inFile - Name of input file name.
+    @param outFile - Name of output file name base (before extension or number)
+    @param testing - False if not a test run.
+    """
+    grabTimelines(inFile, outFile, testing)
+    
+def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True):
     """
     Begin timeline grabbing.
-    @input string name of file of ids.
-    @param string output filename without extension.
+    @param ids - String name of file of ids.
+    @param fileOut - String output filename without extension.
+    @param testing - Is this a test run? If false set Timeline Grabber's real parameters.
     """
 
     tlg = tu.TimelineGrabber()
     tlg.fileIn = WRITE_PATH + ids
     tlg.fileOut = WRITE_PATH + 'timelines/' + fileOut
     tlg.keyFileName = KEY_FILE_NAME
+    
+    #if this is a live run set real parameters.
+    if not testing:
+        tlg.usersPerGrab = 300
+        tlg.tweetsPerUser = 20
+        tlg.tickLength = 60.0
+        tlg.grabInterval = 15
+        tlg.isTesting = False
     
     tlg.startTimer()
     
