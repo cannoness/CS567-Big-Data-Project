@@ -161,7 +161,6 @@ class TimelineGrabber():
 
     def login(self):
         """
-        TODO
         Login to twitter and get a Twython object
         @param keyFileName Name of the file to login with.
         """
@@ -218,6 +217,7 @@ class TimelineGrabber():
             data = self.getTimelines(users, twitter)
 
             for usr in data:
+                print usr
                 print data[usr]
 
             #writeData(data)

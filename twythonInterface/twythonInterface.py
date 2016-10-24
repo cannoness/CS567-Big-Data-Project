@@ -35,15 +35,7 @@ def streamIDsTo(fileOut=DEFAULT_FILE_OUT, loc=LOC_NYC):
     writer.writeIDs(WRITE_PATH + fileOut)
 
 def grabTimelines(ids='uniqueN.txt', fileOut='timeline'):
-    """
-    #grab timelines given list of user ids
-    usrID = '731609412004155392'
-    twitter = tu.searchLogin(KEY_FILE_NAME)
-    #returns data as list of tweets
-    for tweet in data:
-        print tweet['text']
-    output.writeJson(WRITE_PATH + 'timeline.json', data)
-    """
+
     tlg = tu.TimelineGrabber()
     tlg.fileIn = WRITE_PATH + ids
     tlg.fileOut = WRITE_PATH + fileOut
