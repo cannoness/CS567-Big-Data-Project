@@ -198,15 +198,16 @@ class TimelineGrabber():
         for user in ls:
             try:
                 timeline = twitter.get_user_timeline(user_id=user, count=self.tweetsPerUser)
-                time.sleep(1)
                 tweets = []
+                print 'success'
                 for tweet in timeline:
                     tweets.append(tweet)
             except TwythonError as e:
                 print e
+                self.isDone = True
                 break
     
-        data[user] = tweets
+            data[user] = tweets
 
         return data
 
