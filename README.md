@@ -14,19 +14,16 @@ twythonInterface.py has been constructed to condense functionality in
 Tweet Search into fewer modules, get rid of duplicate code, and make usage
 easier by using python instead of individual main methods.
 
+-from *nix systems, use included shell script tiStarter
 
--start python.
+Otherwise:
 
--From the prompt>>> import twythonInterface as ti
+-from prompt: python -i tiStarter.py (This runs tiStarter.py which imports
+twythonInterface as ti), then continues in interactive mode.
 
--to search use
+-call methods in twythonInterface in interactive mode with ti.methodName(args)
 
->>> ti.searchForTerms(<term>, <count>, <fileName>)
+For example: ti.man() shows instructions.
 
--to stream ids use:
 
->>> ti.steamIDsTo(<fileName>)
-
--Ctrl-C to interupt.  This is a messy quit.
-
--exit() to exit python
+-exit() to exit python.  All running threads should stop at this point.
