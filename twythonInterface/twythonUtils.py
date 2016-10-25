@@ -1,10 +1,10 @@
-from twython import Twython
+from twython import Twython, TwythonError
 from twython import TwythonStreamer
 from collections import deque
 from threading import Thread
 from threading import Timer
 import ioModule as output
-import json, sys
+import json, sys, time
 
 
 
@@ -196,11 +196,17 @@ class TimelineGrabber():
         """
         data = {}
         for user in ls:
-            timeline = twitter.get_user_timeline(user_id=user, count=self.tweetsPerUser)
-            tweets = []
-            for tweet in timeline:
-                tweets.append(tweet)
-            data[user] = tweets
+            try:
+                timeline = twitter.get_user_timeline(user_id=user, count=self.tweetsPerUser)
+                time.sleep(1)
+                tweets = []
+                for tweet in timeline:
+                    tweets.append(tweet)
+            except TwythonError as e:
+                print e
+                break
+    
+        data[user] = tweets
 
         return data
 

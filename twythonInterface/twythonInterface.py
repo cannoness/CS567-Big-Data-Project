@@ -9,6 +9,56 @@ WRITE_PATH = 'output/'
 DEFAULT_FILE_OUT = 'data.json'
 
 LOC_NYC = '-74,40,-73,41'
+
+help_searchTerm = '''
+To search for term use:
+ti.searchForTerms([term], [count], [fileName])
+  term = String search term. Default = ' '
+  count = int number of tweets to return. Default = 5
+  fileName = Name of file (and extension) to output to (json format) 
+    Default = 'data.json'.
+'''
+
+help_streamIDs = '''
+To stream user ids to a file use:
+ti.streamIDsTo([fileOut], [location])
+  fileOut = String name of file(and extension) to write to (json format)
+    Default = 'data.json'.
+  location = String describing bounding box of area to stream tweets from.
+    Default = Bounding box around New York City provided by twitter documentation.
+'''
+
+help_timelines = '''
+To grab user timelines use:
+ti.runTimelineGrabber([fileIn], [fileOut], [testing])
+  fileIn = String name of file to get user ids from. Default = 'uniqueN.txt'
+  fileOut = String base name for files (NO EXTENSION, NO NUMBERS) to write 
+    out (json format). Default = 'timeline'
+  testing = boolean, if false run with real collection parameters. Default = False
+'''
+
+help_loadJson = '''
+To load a json file to look at manually use:
+ti.loadJson([filePath])
+  filePath = String file path/name to load. Default = None (Will cause error).
+'''
+
+def man():
+    """
+    How to use instructions.
+    """
+    print help_searchTerm
+    print help_streamIDs
+    print help_timelines
+    print help_loadJson
+
+def loadJson(filePath):
+    """
+    Load a json file to interpreter for manual reading.
+    @return json object
+    """
+    return output.loadJson(filePath)
+    
     
 def searchForTerms(term=' ', count=5, fileName=DEFAULT_FILE_OUT):
     """
@@ -19,7 +69,7 @@ def searchForTerms(term=' ', count=5, fileName=DEFAULT_FILE_OUT):
     """
     twitter = tu.searchLogin(KEY_FILE_NAME)
     results = twitter.search(q=term, count=count)
-    writeJson(WRITE_PATH + writePath, results['statuses'])
+    output.writeJson(WRITE_PATH + fileName, results['statuses'])
 
 def streamIDsTo(fileOut=DEFAULT_FILE_OUT, loc=LOC_NYC):
     """
