@@ -116,4 +116,3 @@ def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True):
         tlg.isTesting = False
     
     tlg.startTimer()
-    

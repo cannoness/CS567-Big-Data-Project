@@ -195,20 +195,21 @@ class TimelineGrabber():
         @param ls list of strings to get user timeline from.
         """
         data = {}
+        print "Getting timelines for ", len(ls), " users."
         for user in ls:
             try:
                 timeline = twitter.get_user_timeline(user_id=user, count=self.tweetsPerUser)
                 tweets = []
-                print 'success'
                 for tweet in timeline:
                     tweets.append(tweet)
+                    data[user] = tweets
             except TwythonError as e:
+                #on error, print user that threw error and continue.
+                #TODO log errors?
                 print e
-                self.isDone = True
-                break
+                print "User id: ", user
     
-            data[user] = tweets
-
+        print "Got timelines for ", len(data), " users."
         return data
 
     def writeData(self, data):
@@ -238,8 +239,7 @@ class TimelineGrabber():
             #done check for premature termination in testing.
             if self.isTesting:
                 self.checkIfDone()
-                
-            print "Grabbing timelines"
+            
             self.numGrabs += 1
             print "Made ", str(self.numGrabs), " so far."
             
@@ -250,6 +250,7 @@ class TimelineGrabber():
         #If not done reset timer and restart.
         if not self.isDone:
             self.clock = Timer(self.tickLength, self.clockTick)
+            self.clock.daemon=True #Stop timer on exit()
             self.clock.start()
 
     def checkIfDone(self):
