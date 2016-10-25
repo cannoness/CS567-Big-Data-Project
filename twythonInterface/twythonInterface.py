@@ -62,6 +62,7 @@ def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True):
         tlg.tweetsPerUser = 20
         tlg.tickLength = 60.0
         tlg.grabInterval = 15
+        tlg.minutesSinceLast = 15
         tlg.isTesting = False
     
     tlg.startTimer()
