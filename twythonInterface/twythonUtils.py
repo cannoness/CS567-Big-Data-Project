@@ -194,7 +194,7 @@ class TimelineGrabber():
         Will return data as a list of timelines.
         @param ls list of strings to get user timeline from.
         """
-        data = {}
+        data = []
         print "Getting timelines for ", len(ls), " users."
         for user in ls:
             try:
@@ -202,7 +202,7 @@ class TimelineGrabber():
                 tweets = []
                 for tweet in timeline:
                     tweets.append(tweet)
-                    data[user] = tweets
+                data.append(tweets)
             except TwythonRateLimitError as e:
                 #This occurs when a rate limit error is thrown.
                 #at this point, the program steps out of the loop and resumes pickup on
