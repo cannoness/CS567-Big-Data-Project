@@ -1,4 +1,4 @@
-from twython import Twython, TwythonError
+from twython import Twython, TwythonError, TwythonRateLimitError
 from twython import TwythonStreamer
 from collections import deque
 from threading import Thread
@@ -203,6 +203,13 @@ class TimelineGrabber():
                 for tweet in timeline:
                     tweets.append(tweet)
                     data[user] = tweets
+            except TwythonRateLimitError as e:
+                #This occurs when a rate limit error is thrown.
+                #at this point, the program steps out of the loop and resumes pickup on
+                #the next scheduled grab.
+                print e
+                print "Rate limit, stepping out of loop..."
+                break
             except TwythonError as e:
                 #on error, print user that threw error and continue.
                 #TODO log errors?
