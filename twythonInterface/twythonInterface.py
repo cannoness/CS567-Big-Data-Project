@@ -35,6 +35,7 @@ ti.runTimelineGrabber([fileIn], [fileOut], [testing])
   fileOut = String base name for files (NO EXTENSION, NO NUMBERS) to write 
     out (json format). Default = 'timeline'
   testing = boolean, if false run with real collection parameters. Default = False
+  startFrom = int, start from a grab later than the first.
 '''
 
 help_loadJson = '''
@@ -84,27 +85,30 @@ def streamIDsTo(fileOut=DEFAULT_FILE_OUT, loc=LOC_NYC):
 
     writer.writeIDs(WRITE_PATH + fileOut)
 
-def runTimelineGrabber(inFile='uniqueN.txt', outFile='timeline', testing=False):
+def runTimelineGrabber(inFile='uniqueN.txt', outFile='timeline', testing=False, startFrom=0):
     """
     Use this for a live run of the timeline grabber.  Just for convenience.
     @param inFile - Name of input file name.
     @param outFile - Name of output file name base (before extension or number)
     @param testing - False if not a test run.
+    @param startFrom - Int what grab to start from (Start later in the id list).
     """
-    grabTimelines(inFile, outFile, testing)
+    grabTimelines(inFile, outFile, testing, startFrom)
     
-def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True):
+def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True, startFrom=0):
     """
     Begin timeline grabbing.
     @param ids - String name of file of ids.
     @param fileOut - String output filename without extension.
     @param testing - Is this a test run? If false set Timeline Grabber's real parameters.
+    @param startFrom - Int what grab to start from (Start later in the id list).
     """
 
     tlg = tu.TimelineGrabber()
     tlg.fileIn = WRITE_PATH + ids
     tlg.fileOut = WRITE_PATH + 'timelines/' + fileOut
     tlg.keyFileName = KEY_FILE_NAME
+    tlg.numGrabs = startFrom
     
     #if this is a live run set real parameters.
     if not testing:
