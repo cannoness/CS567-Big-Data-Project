@@ -132,7 +132,7 @@ class TimelineGrabber():
         String fileOut: Path and file name base to write to (no extension, no number).
         String keyFileName: Path and name of login keys.
 
-    #TODO handle errors.
+
     """
 
     def __init__(self, tickInterval=1.0, grabInterval=5):
@@ -185,7 +185,12 @@ class TimelineGrabber():
             f.readline()
         #make list of user ids to get timelines from.    
         for _ in xrange(self.usersPerGrab):
-            ids.append((f.readline()).rstrip())
+            usrID = f.readline().rstrip()
+            if usrID != "":
+                ids.append(usrID)
+            else:
+                print "End of id file"
+                break
         return ids
         
     def getTimelines(self, ls, twitter):
@@ -239,6 +244,7 @@ class TimelineGrabber():
 
             #If less than 300 users are in the list, this must be the last grab.
             if len(users) < self.usersPerGrab:
+                print "User list is smaller than ", self.usersPerGrab, "Set flag, isDone"
                 self.isDone = True
             data = self.getTimelines(users, twitter)
             self.writeData(data)
@@ -256,6 +262,7 @@ class TimelineGrabber():
 
         #If not done reset timer and restart.
         if not self.isDone:
+            print "Starting clock"
             self.clock = Timer(self.tickLength, self.clockTick)
             self.clock.daemon=True #Stop timer on exit()
             self.clock.start()

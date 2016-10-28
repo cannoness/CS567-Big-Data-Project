@@ -30,7 +30,7 @@ ti.streamIDsTo([fileOut], [location])
 
 help_timelines = '''
 To grab user timelines use:
-ti.runTimelineGrabber([fileIn], [fileOut], [testing])
+ti.runTimelineGrabber([fileIn], [fileOut], [testing], [startFrom])
   fileIn = String name of file to get user ids from. Default = 'uniqueN.txt'
   fileOut = String base name for files (NO EXTENSION, NO NUMBERS) to write 
     out (json format). Default = 'timeline'
