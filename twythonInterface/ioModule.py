@@ -15,6 +15,16 @@ def writeJson(path, jsonObj):
     f.write(json.dumps(jsonObj))
     f.close()
 
+def loadJson(path):
+    """
+    Load a user specified json file.
+    @param path A string path and filename for the desired json file.
+    @return a json object.
+    """
+    f = open(path, 'r')
+    data = json.load(f)
+    return data
+
 class IDWriter:
     """
     This class watches a deque of twitter user ids and writes the IDs out as a 

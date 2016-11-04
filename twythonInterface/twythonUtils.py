@@ -1,9 +1,10 @@
-from twython import Twython
+from twython import Twython, TwythonError, TwythonRateLimitError
 from twython import TwythonStreamer
 from collections import deque
 from threading import Thread
 from threading import Timer
-import json, sys
+import ioModule as output
+import json, sys, time
 
 
 
@@ -79,8 +80,8 @@ def searchLogin(KEY_FILE_NAME):
 #****My Streamer******************
 class MyStreamer(TwythonStreamer):
     """
-    MyStreamer class extends twython streamer.
-    Currently printing out name and text.
+    MyStreamer class extends twython streamer.  This class will log user ids in a
+    newline delimited file and save them for later analysis.
 
     Justin Thomas
     10/05/2016
@@ -116,25 +117,29 @@ class MyStreamer(TwythonStreamer):
 #******TimelineGrabber*******************
 class TimelineGrabber():
     """
-    Instances of this class grab a users timeline and writes out then sleeps for 15
-    minutes.
-    TODO make custom timer
-    """
-
-    def __init__(self, tickInterval=1.0, grabInterval=5):
-        """
-        Constructor instatiates class.
+    Instances of this class grab a users timeline and writes out to json then sleeps 
+    for 15 minutes before writing again.
         Members:
         int minutesSinceLast:  Number of ticks since last timeline grab.
         int grabInterval: Number of minutes between grabs.
         float tickLength: Number of seconds per tick.
         bool isDone: Flag to set when done grabbing tweets.
         int numGrabs: Number of grabs made so far
-        int maxGrabs: Number of sets of grabs to make.
+        int maxGrabs: Number of sets of grabs to make (testing).
+        int usersPerGrab: Number of timelines to grab at a time.
+        int tweetsPerUser: Number of tweets in timeline to grab.
+        String fileIn: File name and path to get user ids from.
+        String fileOut: Path and file name base to write to (no extension, no number).
+        String keyFileName: Path and name of login keys.
 
 
-        @param float tickInterval Clock ticks every tickInterval seconds.
-        @param int grabInterval Number of clock ticks between timeline grabs.
+    """
+
+    def __init__(self, tickInterval=1.0, grabInterval=5):
+        """
+        Constructor instatiates class.
+        @param float tickInterval - Clock ticks every tickInterval seconds.
+        @param int grabInterval - Number of clock ticks between timeline grabs.
         """
         self.minutesSinceLast = grabInterval
         self.grabInterval = grabInterval
@@ -148,30 +153,27 @@ class TimelineGrabber():
         self.fileIn = None
         self.fileOut = None
         self.keyFileName = None
+        self.isTesting = True
 
-
-    def setFileInName(self, stringIn):
-        self.fileIn = stringIn
-        
     def startTimer(self):
         """
-        Method to call to start timer.
+        Method to call to start timer. and thus start grabbing.
         """
         self.clockTick()
 
     def login(self):
         """
-        TODO
         Login to twitter and get a Twython object
         @param keyFileName Name of the file to login with.
+        @return Twitter object to use.
         """
         #get keyFileName
         return searchLogin(self.keyFileName)
 
     def getSearchList(self):
         """
-        this method returns a list of user names to search for on this grab.
-        Should be no larger than 300
+        This method returns a list of user names to search for on this grab.
+        Should be no larger than 300.
         @return list of user ids to get timelines from
         """
         ids = []
@@ -183,22 +185,51 @@ class TimelineGrabber():
             f.readline()
         #make list of user ids to get timelines from.    
         for _ in xrange(self.usersPerGrab):
-            ids.append((f.readline()).rstrip())
+            usrID = f.readline().rstrip()
+            if usrID != "":
+                ids.append(usrID)
+            else:
+                print "End of id file"
+                break
         return ids
         
     def getTimelines(self, ls, twitter):
         """
-        TODO
         This method grabs timelines for each user in ls
         Will return data as a list of timelines.
         @param ls list of strings to get user timeline from.
         """
         data = []
+        print "Getting timelines for ", len(ls), " users."
         for user in ls:
-            timeline = twitter.get_user_timeline(user_id=user, count=3)
-            data.append((user, timeline))
-
+            try:
+                timeline = twitter.get_user_timeline(user_id=user, count=self.tweetsPerUser)
+                tweets = []
+                for tweet in timeline:
+                    tweets.append(tweet)
+                data.append(tweets)
+            except TwythonRateLimitError as e:
+                #This occurs when a rate limit error is thrown.
+                #at this point, the program steps out of the loop and resumes pickup on
+                #the next scheduled grab.
+                print e
+                print "Rate limit, stepping out of loop..."
+                break
+            except TwythonError as e:
+                #on error, print user that threw error and continue.
+                #TODO log errors?
+                print e
+                print "User id: ", user
+    
+        print "Got timelines for ", len(data), " users."
         return data
+
+    def writeData(self, data):
+        """
+        write data to json
+        """
+        path = self.fileOut + str(self.numGrabs) + '.json'
+        output.writeJson(path, data)
 
     def clockTick(self):
         """
@@ -206,26 +237,34 @@ class TimelineGrabber():
         it is time to grab again.  If it is not, it prints a heartbeat.
         """        
         if self.minutesSinceLast == self.grabInterval:
-            #reset minutes since last, increment number of grabs, call check if done.
-            self.minutesSinceLast = 0
 
+            self.minutesSinceLast = 0
             twitter = self.login()
             users = self.getSearchList()
-            #TODO work on getTimelines
-            data = self.getTimelines(users, twitter)
 
-            #writeData(data)
-            self.checkIfDone()
-            print "Grabbing timelines"
-            print users
+            #If less than 300 users are in the list, this must be the last grab.
+            if len(users) < self.usersPerGrab:
+                print "User list is smaller than ", self.usersPerGrab, "Set flag, isDone"
+                self.isDone = True
+            data = self.getTimelines(users, twitter)
+            self.writeData(data)
+
+            #done check for premature termination in testing.
+            if self.isTesting:
+                self.checkIfDone()
+            
             self.numGrabs += 1
-        else:
+            print "Made ", str(self.numGrabs), " so far."
+            
+        else: #heartbeat
             self.minutesSinceLast += 1
             print self.minutesSinceLast, " minutes since last grab."
 
         #If not done reset timer and restart.
         if not self.isDone:
+            print "Starting clock"
             self.clock = Timer(self.tickLength, self.clockTick)
+            self.clock.daemon=True #Stop timer on exit()
             self.clock.start()
 
     def checkIfDone(self):

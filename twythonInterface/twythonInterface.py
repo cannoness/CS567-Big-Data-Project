@@ -9,6 +9,57 @@ WRITE_PATH = 'output/'
 DEFAULT_FILE_OUT = 'data.json'
 
 LOC_NYC = '-74,40,-73,41'
+
+help_searchTerm = '''
+To search for term use:
+ti.searchForTerms([term], [count], [fileName])
+  term = String search term. Default = ' '
+  count = int number of tweets to return. Default = 5
+  fileName = Name of file (and extension) to output to (json format) 
+    Default = 'data.json'.
+'''
+
+help_streamIDs = '''
+To stream user ids to a file use:
+ti.streamIDsTo([fileOut], [location])
+  fileOut = String name of file(and extension) to write to (json format)
+    Default = 'data.json'.
+  location = String describing bounding box of area to stream tweets from.
+    Default = Bounding box around New York City provided by twitter documentation.
+'''
+
+help_timelines = '''
+To grab user timelines use:
+ti.runTimelineGrabber([fileIn], [fileOut], [testing], [startFrom])
+  fileIn = String name of file to get user ids from. Default = 'uniqueN.txt'
+  fileOut = String base name for files (NO EXTENSION, NO NUMBERS) to write 
+    out (json format). Default = 'timeline'
+  testing = boolean, if false run with real collection parameters. Default = False
+  startFrom = int, start from a grab later than the first.
+'''
+
+help_loadJson = '''
+To load a json file to look at manually use:
+ti.loadJson([filePath])
+  filePath = String file path/name to load. Default = None (Will cause error).
+'''
+
+def man():
+    """
+    How to use instructions.
+    """
+    print help_searchTerm
+    print help_streamIDs
+    print help_timelines
+    print help_loadJson
+
+def loadJson(filePath):
+    """
+    Load a json file to interpreter for manual reading.
+    @return json object
+    """
+    return output.loadJson(filePath)
+    
     
 def searchForTerms(term=' ', count=5, fileName=DEFAULT_FILE_OUT):
     """
@@ -19,7 +70,7 @@ def searchForTerms(term=' ', count=5, fileName=DEFAULT_FILE_OUT):
     """
     twitter = tu.searchLogin(KEY_FILE_NAME)
     results = twitter.search(q=term, count=count)
-    writeJson(WRITE_PATH + writePath, results['statuses'])
+    output.writeJson(WRITE_PATH + fileName, results['statuses'])
 
 def streamIDsTo(fileOut=DEFAULT_FILE_OUT, loc=LOC_NYC):
     """
@@ -34,19 +85,38 @@ def streamIDsTo(fileOut=DEFAULT_FILE_OUT, loc=LOC_NYC):
 
     writer.writeIDs(WRITE_PATH + fileOut)
 
-def grabTimelines(ids='uniqueN.txt', fileOut='timeline'):
+def runTimelineGrabber(inFile='uniqueN.txt', outFile='timeline', testing=False, startFrom=0):
     """
-    #grab timelines given list of user ids
-    usrID = '731609412004155392'
-    twitter = tu.searchLogin(KEY_FILE_NAME)
-    #returns data as list of tweets
-    for tweet in data:
-        print tweet['text']
-    output.writeJson(WRITE_PATH + 'timeline.json', data)
+    Use this for a live run of the timeline grabber.  Just for convenience.
+    @param inFile - Name of input file name.
+    @param outFile - Name of output file name base (before extension or number)
+    @param testing - False if not a test run.
+    @param startFrom - Int what grab to start from (Start later in the id list).
     """
+    grabTimelines(inFile, outFile, testing, startFrom)
+    
+def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True, startFrom=0):
+    """
+    Begin timeline grabbing.
+    @param ids - String name of file of ids.
+    @param fileOut - String output filename without extension.
+    @param testing - Is this a test run? If false set Timeline Grabber's real parameters.
+    @param startFrom - Int what grab to start from (Start later in the id list).
+    """
+
     tlg = tu.TimelineGrabber()
     tlg.fileIn = WRITE_PATH + ids
-    tlg.fileOut = WRITE_PATH + fileOut
+    tlg.fileOut = WRITE_PATH + 'timelines/' + fileOut
     tlg.keyFileName = KEY_FILE_NAME
+    tlg.numGrabs = startFrom
+    
+    #if this is a live run set real parameters.
+    if not testing:
+        tlg.usersPerGrab = 300
+        tlg.tweetsPerUser = 20
+        tlg.tickLength = 60.0
+        tlg.grabInterval = 15
+        tlg.minutesSinceLast = 15
+        tlg.isTesting = False
     
     tlg.startTimer()
