@@ -120,3 +120,12 @@ def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True, startFrom
         tlg.isTesting = False
     
     tlg.startTimer()
+
+def tweetCreatedSinceAugust(tweet):
+    """
+    See if a given tweet was created since 8/2016
+    """
+    
+    months = 'AugSepOctNovDec'
+    year = '2016'
+    return tu.tweetCreatedSince(tweet, months, year)

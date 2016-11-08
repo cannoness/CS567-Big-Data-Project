@@ -77,6 +77,26 @@ def searchLogin(KEY_FILE_NAME):
 
 #***********************Begin Classes**************************************************
 
+def tweetCreatedSince(tweet, months, year):
+    """
+    Check if tweet was created since a user specified month.
+    @param Tweet tweet - Tweet object (json format).
+    @param String months - Month names that are valid.
+    @param String year - Year that we're looking in.
+    @return - True if tweet was created within time limit.
+    """
+    #monthString = 'AugSepOctNovDec'
+    #yearString = '2016'
+    tweetDate = tweet['created_at']
+    dateArr = tweetDate.split()
+    isValid = False
+    if dateArr[1] in months and dateArr[5] == year:
+        isValid = True
+
+    return isValid
+    #return is valid since
+
+
 #****My Streamer******************
 class MyStreamer(TwythonStreamer):
     """
