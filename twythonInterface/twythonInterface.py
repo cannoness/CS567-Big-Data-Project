@@ -129,3 +129,6 @@ def tweetCreatedSinceAugust(tweet):
     months = 'AugSepOctNovDec'
     year = '2016'
     return tu.tweetCreatedSince(tweet, months, year)
+
+def toCsv(path):
+    output.jsonToCsv('output/test.csv', loadJson(path))

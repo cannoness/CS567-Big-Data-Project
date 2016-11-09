@@ -1,9 +1,33 @@
 from collections import deque
-import json, sys
+import json, sys, csv, re
 
 #
 #Contains methods for reading and writing to disk.
 #
+
+def cleanText(txt):
+    """
+    This takes a string and takes out anything that is not alpha numeric or ' '.
+    """
+    keeperChars = '[^0-9a-zA-Z]+'
+    txt = txt.strip()
+    txt = re.sub(keeperChars, ' ', txt)
+    return txt
+
+def jsonToCsv(pathOut, jsonObj):
+    """
+    Convert a JSON document to csv
+    """
+    fOut = open(pathOut, 'w')
+    writer = csv.writer(fOut)
+    for timeline in jsonObj:
+        for tweet in timeline:
+            userId = tweet['user']['id_str']
+            date = tweet['created_at']
+            txt = cleanText(tweet['text'])
+            writer.writerow((userId, date, txt))
+    fOut.close()
+    
 
 def writeJson(path, jsonObj):
     """
