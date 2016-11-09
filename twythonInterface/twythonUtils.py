@@ -19,7 +19,27 @@ def startLocStream(tweetQ, loc, keyfile):
     """
     streamer = streamLogin(keyfile, tweetQ)
     streamer.statuses.filter(locations=loc)
+
     
+def tweetCreatedSince(tweet, months, year):
+    """
+    Check if tweet was created since a user specified month.
+    @param Tweet tweet - Tweet object (json format).
+    @param String months - Month names that are valid.
+    @param String year - Year that we're looking in.
+    @return - True if tweet was created within time limit.
+    """
+    #monthString = 'AugSepOctNovDec'
+    #yearString = '2016'
+    tweetDate = tweet['created_at']
+    dateArr = tweetDate.split()
+    isValid = False
+    if dateArr[1] in months and dateArr[5] == year:
+        isValid = True
+
+    return isValid
+    #return is valid since
+
 #********* Login functions**********************************************************
 # Use streamLogin to use TwythonStreamer.
 # Use searchLogin to perform a search.
@@ -76,25 +96,6 @@ def searchLogin(KEY_FILE_NAME):
     return Twython(keyFile[CONSUMER_KEY], access_token=keyFile[ACCESS_TOKEN])
 
 #***********************Begin Classes**************************************************
-
-def tweetCreatedSince(tweet, months, year):
-    """
-    Check if tweet was created since a user specified month.
-    @param Tweet tweet - Tweet object (json format).
-    @param String months - Month names that are valid.
-    @param String year - Year that we're looking in.
-    @return - True if tweet was created within time limit.
-    """
-    #monthString = 'AugSepOctNovDec'
-    #yearString = '2016'
-    tweetDate = tweet['created_at']
-    dateArr = tweetDate.split()
-    isValid = False
-    if dateArr[1] in months and dateArr[5] == year:
-        isValid = True
-
-    return isValid
-    #return is valid since
 
 
 #****My Streamer******************
@@ -223,7 +224,7 @@ class TimelineGrabber():
         print "Getting timelines for ", len(ls), " users."
         for user in ls:
             try:
-                timeline = twitter.get_user_timeline(user_id=user, count=self.tweetsPerUser)
+                timeline = twitter.get_user_timeline(user_id=user, count=self.tweetsPerUser, trim_user=True)
                 tweets = []
                 for tweet in timeline:
                     tweets.append(tweet)
