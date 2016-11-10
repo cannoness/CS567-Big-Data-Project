@@ -121,25 +121,54 @@ def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True, startFrom
     
     tlg.startTimer()
 
-def trimTweets():
+def trimTweets(tlRange=20, isFollowup=False):
     """
     Load json, go through each timeline and trim out tweets outside of range and beyond
     20
     """
-    tweetsRemoved = 0
+    tweetsSaved = 0
     index = -1
-    timeline = loadJson('output/timelines/timeline0.json')
-    for user in timeline:
-        tweetsRemoved = 0
-        index += 1
-        for tweet in user:
-            if not tu.dateInRange(tweet['created_at']):
-                tweetsRemoved += 1
-        print "Removed ", tweetsRemoved, " from ", index
+    for i in range(0, tlRange):
+        tooNew = False
+        
+        fileInName = WRITE_PATH + 'timelines/' + 'timeline' + str(i) + '.json'
+        fileOutName = WRITE_PATH + 'timelines/' + 'timelineT' + str(i) + '.json'
+        followUpName = WRITE_PATH + 'followUpIDs' + str(i) + '.txt'
+        followUps = open(followUpName, 'w') #open file to write follow up ids to.
+        timeline = loadJson(fileInName)
+        outJson = []
+        for user in timeline:
+            tweetsSaved = 0
+            newList = []
+            for tweet in user:
+                score = tu.dateInRange(tweet['created_at'])
+                lastID = tweet['id']
+                if score < 0:
+                    #last tweet too old
+                    print '.',
+                elif score > 0:
+                    #last tweet too new, flag for followup
+                    tooNew = True
+                else:
+                    newList.append(tweet)
+                    tweetsSaved += 1
+
+
+
+            if tweetsSaved < 20 and tooNew:
+                followUps.write(tweet['user']['id_str'])
+                followUps.write(' ')
+                followUps.write(str(lastID))
+                followUps.write('\n')
+            outJson.append(newList)
+            print "Saved ", len(user)
+        output.writeJson(fileOutName, outJson)
+        followUps.close()
             
         
 def tweetCreatedSinceAugust(tweet):
     """
+    @deprecated
     See if a given tweet was created since 8/2016
     """
     

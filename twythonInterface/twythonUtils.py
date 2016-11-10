@@ -24,15 +24,21 @@ def dateInRange(dateString):
     """
     Return true if date string is in range. Using Nov strictly less than Nov 7 to cut
     last minute get out the vote stuff.
+    @return int isValid - if isValid is negative, tweet is too old, if positive too new
+    0 is in valid range.
     """
     dateArr = dateString.split()
-    isValid = False
+    isValid = -1
     if dateArr[5] == '2016':
         if dateArr[1] in 'AugSepOct':
-            isValid = True
+            isValid = 0
         elif dateArr[1] == 'Nov' and int(dateArr[2]) < 7:
+
+            isValid = 0
+        else:
             #Tweet came too late.  Flag to search farther back.
-            isValid = True
+            #save tweet id
+            isValid = 1
     return isValid
 
         

@@ -51,6 +51,7 @@ def loadJson(path):
     """
     f = open(path, 'r')
     data = json.load(f)
+    f.close()
     return data
 
 class IDWriter:
