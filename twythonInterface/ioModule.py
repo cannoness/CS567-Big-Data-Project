@@ -8,6 +8,8 @@ import json, sys, csv, re
 def cleanText(txt):
     """
     This takes a string and takes out anything that is not alpha numeric or ' '.
+    @param String txt - String of text to clean.
+    @return String Text stripped of characters that are not alphanumeric or ' '.
     """
     keeperChars = '[^0-9a-zA-Z]+'
     txt = txt.strip()
@@ -16,7 +18,9 @@ def cleanText(txt):
 
 def jsonToCsv(pathOut, jsonObj):
     """
-    Convert a JSON document to csv
+    Convert a JSON document to csv.
+    @param String pathOut - The output path and file name.
+    @param json jsonObj - json object containing a list of lists of tweets.
     """
     fOut = open(pathOut, 'w')
     writer = csv.writer(fOut)
