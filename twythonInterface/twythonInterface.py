@@ -113,7 +113,7 @@ def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True, startFrom
     #if this is a live run set real parameters.
     if not testing:
         tlg.usersPerGrab = 300
-        tlg.tweetsPerUser = 20
+        tlg.tweetsPerUser = 100
         tlg.tickLength = 60.0
         tlg.grabInterval = 15
         tlg.minutesSinceLast = 15
