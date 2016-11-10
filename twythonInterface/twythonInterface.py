@@ -121,6 +121,23 @@ def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True, startFrom
     
     tlg.startTimer()
 
+def trimTweets():
+    """
+    Load json, go through each timeline and trim out tweets outside of range and beyond
+    20
+    """
+    tweetsRemoved = 0
+    index = -1
+    timeline = loadJson('output/timelines/timeline0.json')
+    for user in timeline:
+        tweetsRemoved = 0
+        index += 1
+        for tweet in user:
+            if not tu.dateInRange(tweet['created_at']):
+                tweetsRemoved += 1
+        print "Removed ", tweetsRemoved, " from ", index
+            
+        
 def tweetCreatedSinceAugust(tweet):
     """
     See if a given tweet was created since 8/2016

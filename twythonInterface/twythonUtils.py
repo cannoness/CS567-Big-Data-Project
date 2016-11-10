@@ -20,9 +20,25 @@ def startLocStream(tweetQ, loc, keyfile):
     streamer = streamLogin(keyfile, tweetQ)
     streamer.statuses.filter(locations=loc)
 
-    
+def dateInRange(dateString):
+    """
+    Return true if date string is in range. Using Nov strictly less than Nov 7 to cut
+    last minute get out the vote stuff.
+    """
+    dateArr = dateString.split()
+    isValid = False
+    if dateArr[5] == '2016':
+        if dateArr[1] in 'AugSepOct':
+            isValid = True
+        elif dateArr[1] == 'Nov' and int(dateArr[2]) < 7:
+            #Tweet came too late.  Flag to search farther back.
+            isValid = True
+    return isValid
+
+        
 def tweetCreatedSince(tweet, months, year):
     """
+    @deprecated
     Check if tweet was created since a user specified month.
     @param Tweet tweet - Tweet object (json format).
     @param String months - Month names that are valid.
