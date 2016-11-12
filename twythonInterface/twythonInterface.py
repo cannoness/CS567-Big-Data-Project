@@ -161,7 +161,7 @@ def trimTweets(tlRange=20, isFollowup=False):
                 followUps.write(str(lastID))
                 followUps.write('\n')
             outJson.append(newList)
-            print "Saved ", len(user)
+            print "Saved ", len(newList)
         output.writeJson(fileOutName, outJson)
         followUps.close()
             
@@ -178,3 +178,17 @@ def tweetCreatedSinceAugust(tweet):
 
 def toCsv(path):
     output.jsonToCsv('output/test.csv', loadJson(path))
+
+def concatenateIDFiles(nameRange=20):
+    """
+    Concatenate followup id files
+    @param int nameRange - Maximum range of file numbers (exclusive) default 20
+    """
+    with open('output/followupIDs.txt', 'w') as outFile:
+        for i in range(0, nameRange):
+            fileName = 'output/followUpIDs' + str(i) + '.txt'
+            print fileName
+            with open(fileName, 'r') as inFile:
+                for line in inFile:
+                    outFile.write(line)
+                    
