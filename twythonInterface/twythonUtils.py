@@ -197,6 +197,7 @@ class TimelineGrabber():
         self.fileOut = None
         self.keyFileName = None
         self.isTesting = True
+        self.isFollowup = False
 
     def startTimer(self):
         """
@@ -228,7 +229,7 @@ class TimelineGrabber():
             f.readline()
         #make list of user ids to get timelines from.    
         for _ in xrange(self.usersPerGrab):
-            usrID = f.readline().rstrip()
+            usrID = f.readline().split()
             if usrID != "":
                 ids.append(usrID)
             else:
@@ -246,7 +247,15 @@ class TimelineGrabber():
         print "Getting timelines for ", len(ls), " users."
         for user in ls:
             try:
-                timeline = twitter.get_user_timeline(user_id=user, count=self.tweetsPerUser, trim_user=True)
+                #If this is a followup, call api with max_id set
+                if self.followUp:
+                    timeline = twitter.get_user_timeline(user_id=user[0],
+                                                         count = self.tweetsPerUser,
+                                                         trim_user=True, max_id=user[1])
+                else:
+                    timeline = twitter.get_user_timeline(user_id=user[0],
+                                                     count=self.tweetsPerUser,
+                                                     trim_user=True)
                 tweets = []
                 for tweet in timeline:
                     tweets.append(tweet)

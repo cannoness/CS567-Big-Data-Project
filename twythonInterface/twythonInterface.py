@@ -85,7 +85,8 @@ def streamIDsTo(fileOut=DEFAULT_FILE_OUT, loc=LOC_NYC):
 
     writer.writeIDs(WRITE_PATH + fileOut)
 
-def runTimelineGrabber(inFile='uniqueN.txt', outFile='timeline', testing=False, startFrom=0):
+def runTimelineGrabber(inFile='uniqueN.txt', outFile='timeline', testing=False,
+                       startFrom=0, isFollowup=False):
     """
     Use this for a live run of the timeline grabber.  Just for convenience.
     @param inFile - Name of input file name.
@@ -93,9 +94,10 @@ def runTimelineGrabber(inFile='uniqueN.txt', outFile='timeline', testing=False, 
     @param testing - False if not a test run.
     @param startFrom - Int what grab to start from (Start later in the id list).
     """
-    grabTimelines(inFile, outFile, testing, startFrom)
+    grabTimelines(inFile, outFile, testing, startFrom, isFollowup)
     
-def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True, startFrom=0):
+def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True, startFrom=0,
+                  isFollowup=False):
     """
     Begin timeline grabbing.
     @param ids - String name of file of ids.
@@ -109,6 +111,7 @@ def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True, startFrom
     tlg.fileOut = WRITE_PATH + 'timelines/' + fileOut
     tlg.keyFileName = KEY_FILE_NAME
     tlg.numGrabs = startFrom
+    tlg.isFollowup = isFollowup
     
     #if this is a live run set real parameters.
     if not testing:
@@ -150,8 +153,11 @@ def trimTweets(tlRange=20, isFollowup=False):
                     #last tweet too new, flag for followup
                     tooNew = True
                 else:
-                    newList.append(tweet)
-                    tweetsSaved += 1
+                    if tweetsSaved >= 20:
+                        break
+                    else:
+                        newList.append(tweet)
+                        tweetsSaved += 1
 
 
 
@@ -164,8 +170,7 @@ def trimTweets(tlRange=20, isFollowup=False):
             print "Saved ", len(newList)
         output.writeJson(fileOutName, outJson)
         followUps.close()
-            
-        
+                    
 def tweetCreatedSinceAugust(tweet):
     """
     @deprecated
@@ -191,4 +196,3 @@ def concatenateIDFiles(nameRange=20):
             with open(fileName, 'r') as inFile:
                 for line in inFile:
                     outFile.write(line)
-                    
