@@ -183,7 +183,7 @@ def tweetCreatedSinceAugust(tweet):
     return tu.tweetCreatedSince(tweet, months, year)
 
 def toCsv(path):
-    output.jsonToCsv('output/test.csv', loadJson(path))
+    output.jsonToCsv('output/tBA0.csv', loadJson(path))
 
 def concatenateIDFiles(nameRange=20):
     """
@@ -241,7 +241,10 @@ def addToJson(nameIn='timelineTB', basePath='output/timelines/timelineTBig.json'
                     entry['created_at'] = tweet['created_at']
                     tweetList.append(entry)
                 if idStr in baseJson:
-                    baseJson[idStr].extend(tweetList)
+                    print "ID here ", idStr, " length: ", len(baseJson[idStr])
+                    numToTake = 20 - len(baseJson[idStr])
+                    baseJson[idStr].extend(tweetList[:numToTake])
+                    print "Adding: ", numToTake, "new length: ", len(baseJson[idStr])
                 else:
                     baseJson[idStr] = tweetList
     output.writeJson('output/timelines/timelineTBigA0.json', baseJson)

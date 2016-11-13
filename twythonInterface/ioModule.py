@@ -24,9 +24,9 @@ def jsonToCsv(pathOut, jsonObj):
     """
     fOut = open(pathOut, 'w')
     writer = csv.writer(fOut)
-    for timeline in jsonObj:
-        for tweet in timeline:
-            userId = tweet['user']['id_str']
+    for user in jsonObj:
+        for tweet in jsonObj[user]:
+            userId = user
             date = tweet['created_at']
             txt = cleanText(tweet['text'])
             writer.writerow((userId, date, txt))
