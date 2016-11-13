@@ -248,7 +248,7 @@ class TimelineGrabber():
         for user in ls:
             try:
                 #If this is a followup, call api with max_id set
-                if self.followUp:
+                if self.isFollowup:
                     timeline = twitter.get_user_timeline(user_id=user[0],
                                                          count = self.tweetsPerUser,
                                                          trim_user=True, max_id=user[1])

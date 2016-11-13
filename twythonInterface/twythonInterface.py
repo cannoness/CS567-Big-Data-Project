@@ -124,7 +124,8 @@ def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True, startFrom
     
     tlg.startTimer()
 
-def trimTweets(tlRange=20, isFollowup=False):
+def trimTweets(tlRange=20, isFollowup=False, inFileName='timeline',
+               outFileName='timelineT', idFile='followUpIDs'):
     """
     Load json, go through each timeline and trim out tweets outside of range and beyond
     20
@@ -134,9 +135,9 @@ def trimTweets(tlRange=20, isFollowup=False):
     for i in range(0, tlRange):
         tooNew = False
         
-        fileInName = WRITE_PATH + 'timelines/' + 'timeline' + str(i) + '.json'
-        fileOutName = WRITE_PATH + 'timelines/' + 'timelineT' + str(i) + '.json'
-        followUpName = WRITE_PATH + 'followUpIDs' + str(i) + '.txt'
+        fileInName = WRITE_PATH + 'timelines/' + inFileName + str(i) + '.json'
+        fileOutName = WRITE_PATH + 'timelines/' + outFileName + str(i) + '.json'
+        followUpName = WRITE_PATH + idFile + str(i) + '.txt'
         followUps = open(followUpName, 'w') #open file to write follow up ids to.
         timeline = loadJson(fileInName)
         outJson = []
@@ -196,3 +197,5 @@ def concatenateIDFiles(nameRange=20):
             with open(fileName, 'r') as inFile:
                 for line in inFile:
                     outFile.write(line)
+
+#TODO combine jsons
