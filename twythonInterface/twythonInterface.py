@@ -228,18 +228,23 @@ def makeBigJson():
 
 def addToJson(nameIn='timelineTB', basePath='output/timelines/timelineTBig.json',
               numRange=4):
+    """
+    Add smaller jsons to large JSON
+    #TODO test this.  As of 11/13/2016 1:34pm is untested
+    """
     baseJson = loadJson(basePath)
     for i in range(0, 4):
         fileName = 'output/timelines/' + nameIn + str(i) + '.json'
         jsonIn = loadJson(fileName)
         for user in jsonIn:
-            if len(user) > 0:
-                idStr = user[0]['user']['id_str']
+            if len(jsonIn[user]) > 0:
+                idStr = user
                 tweetList = []
                 for tweet in user:
                     entry = {}
                     entry['text'] = tweet['text']
                     entry['created_at'] = tweet['created_at']
+                    entry['id'] = tweet['id']
                     tweetList.append(entry)
                 if idStr in baseJson:
                     print "ID here ", idStr, " length: ", len(baseJson[idStr])
