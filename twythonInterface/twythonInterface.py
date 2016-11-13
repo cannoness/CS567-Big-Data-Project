@@ -200,6 +200,11 @@ def concatenateIDFiles(nameRange=20):
 
 
 def makeBigJson():
+    """
+    Combine jsons into one json.
+    Key is user id_str
+    Info saved is text and created at string.
+    """
     dataOut = {}
     baseName = 'output/timelines/timelineT'
     extension = '.json'
@@ -220,11 +225,23 @@ def makeBigJson():
         print len(dataOut)
     output.writeJson('output/timelines/timelineTBig.json', dataOut)
 
-    
-#TODO combine jsons
-def toUserBasedJson():
-    """
-    built specifically to convert list of list format to dictionary of users
-    """
-    data = {}
-    
+def addToJson(nameIn='timelineTB', basePath='output/timelines/timelineTBig.json',
+              numRange=4):
+    baseJson = loadJson(basePath)
+    for i in range(0, 4):
+        fileName = 'output/timelines/' + nameIn + str(i) + '.json'
+        jsonIn = loadJson(fileName)
+        for user in jsonIn:
+            if len(user) > 0:
+                idStr = user[0]['user']['id_str']
+                tweetList = []
+                for tweet in user:
+                    entry = {}
+                    entry['text'] = tweet['text']
+                    entry['created_at'] = tweet['created_at']
+                    tweetList.append(entry)
+                if idStr in baseJson:
+                    baseJson[idStr].extend(tweetList)
+                else:
+                    baseJson[idStr] = tweetList
+    output.writeJson('output/timelines/timelineTBigA0.json', baseJson)
