@@ -249,9 +249,13 @@ class TimelineGrabber():
             try:
                 #If this is a followup, call api with max_id set
                 if self.isFollowup:
-                    timeline = twitter.get_user_timeline(user_id=user[0],
-                                                         count = self.tweetsPerUser,
-                                                         trim_user=True, max_id=user[1])
+                    if len(user) >= 2:
+                        timeline = twitter.get_user_timeline(user_id=user[0],
+                                                             count = self.tweetsPerUser,
+                                                             trim_user=True,
+                                                             max_id=user[1])
+                    else:
+                        print "User did not have max_id"
                 else:
                     timeline = twitter.get_user_timeline(user_id=user[0],
                                                      count=self.tweetsPerUser,
