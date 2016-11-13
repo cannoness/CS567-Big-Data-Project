@@ -243,27 +243,32 @@ class TimelineGrabber():
         Will return data as a list of timelines.
         @param ls list of strings to get user timeline from.
         """
-        data = []
+        data = {}
         print "Getting timelines for ", len(ls), " users."
         for user in ls:
             try:
+                idStr=user[0]
                 #If this is a followup, call api with max_id set
                 if self.isFollowup:
                     if len(user) >= 2:
-                        timeline = twitter.get_user_timeline(user_id=user[0],
+                        timeline = twitter.get_user_timeline(user_id=idStr,
                                                              count = self.tweetsPerUser,
                                                              trim_user=True,
                                                              max_id=user[1])
                     else:
                         print "User did not have max_id"
                 else:
-                    timeline = twitter.get_user_timeline(user_id=user[0],
+                    timeline = twitter.get_user_timeline(user_id=idStr,
                                                      count=self.tweetsPerUser,
                                                      trim_user=True)
                 tweets = []
                 for tweet in timeline:
-                    tweets.append(tweet)
-                data.append(tweets)
+                    entry = {}
+                    entry['created_at'] = tweet['created_at']
+                    entry['text'] = tweet['text']
+                    entry['id'] = tweet['id']
+                    tweets.append(entry)
+                data[idStr] = tweets
             except TwythonRateLimitError as e:
                 #This occurs when a rate limit error is thrown.
                 #at this point, the program steps out of the loop and resumes pickup on

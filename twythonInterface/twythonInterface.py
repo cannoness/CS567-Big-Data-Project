@@ -140,11 +140,11 @@ def trimTweets(tlRange=20, isFollowup=False, inFileName='timeline',
         followUpName = WRITE_PATH + idFile + str(i) + '.txt'
         followUps = open(followUpName, 'w') #open file to write follow up ids to.
         timeline = loadJson(fileInName)
-        outJson = []
+        outJson = {}
         for user in timeline:
             tweetsSaved = 0
             newList = []
-            for tweet in user:
+            for tweet in timeline[user]:
                 score = tu.dateInRange(tweet['created_at'])
                 lastID = tweet['id']
                 if score < 0:
@@ -163,11 +163,12 @@ def trimTweets(tlRange=20, isFollowup=False, inFileName='timeline',
 
 
             if tweetsSaved < 20 and tooNew:
-                followUps.write(tweet['user']['id_str'])
+                followUps.write(user)
                 followUps.write(' ')
                 followUps.write(str(lastID))
                 followUps.write('\n')
-            outJson.append(newList)
+            if tweetsSaved > 0:
+                outJson[user] = newList
             print "Saved ", len(newList)
         output.writeJson(fileOutName, outJson)
         followUps.close()
