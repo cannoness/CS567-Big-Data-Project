@@ -230,7 +230,7 @@ class TimelineGrabber():
         #make list of user ids to get timelines from.    
         for _ in xrange(self.usersPerGrab):
             usrID = f.readline().split()
-            if usrID != "":
+            if len(usrID) != 0:
                 ids.append(usrID)
             else:
                 print "End of id file"

@@ -186,14 +186,14 @@ def tweetCreatedSinceAugust(tweet):
 def toCsv(path):
     output.jsonToCsv('output/tBA0.csv', loadJson(path))
 
-def concatenateIDFiles(nameRange=20):
+def concatenateIDFiles(nameRange=20, inName='followUpIDs', outPath='output/followUpIDs.txt'):
     """
     Concatenate followup id files
     @param int nameRange - Maximum range of file numbers (exclusive) default 20
     """
-    with open('output/followupIDs.txt', 'w') as outFile:
+    with open(outPath, 'w') as outFile:
         for i in range(0, nameRange):
-            fileName = 'output/followUpIDs' + str(i) + '.txt'
+            fileName = 'output/' + inName + str(i) + '.txt'
             print fileName
             with open(fileName, 'r') as inFile:
                 for line in inFile:
@@ -227,20 +227,20 @@ def makeBigJson():
     output.writeJson('output/timelines/timelineTBig.json', dataOut)
 
 def addToJson(nameIn='timelineTB', basePath='output/timelines/timelineTBig.json',
-              numRange=4):
+              outPath='output/timelines/timelineTBigA0.json', numRange=4):
     """
     Add smaller jsons to large JSON
     #TODO test this.  As of 11/13/2016 1:34pm is untested
     """
     baseJson = loadJson(basePath)
-    for i in range(0, 4):
+    for i in range(0, numRange):
         fileName = 'output/timelines/' + nameIn + str(i) + '.json'
         jsonIn = loadJson(fileName)
         for user in jsonIn:
             if len(jsonIn[user]) > 0:
                 idStr = user
                 tweetList = []
-                for tweet in user:
+                for tweet in jsonIn[user]:
                     entry = {}
                     entry['text'] = tweet['text']
                     entry['created_at'] = tweet['created_at']
@@ -253,4 +253,4 @@ def addToJson(nameIn='timelineTB', basePath='output/timelines/timelineTBig.json'
                     print "Adding: ", numToTake, "new length: ", len(baseJson[idStr])
                 else:
                     baseJson[idStr] = tweetList
-    output.writeJson('output/timelines/timelineTBigA0.json', baseJson)
+    output.writeJson(outPath, baseJson)
