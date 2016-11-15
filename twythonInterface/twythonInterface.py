@@ -6,6 +6,7 @@ from threading import Thread
 
 KEY_FILE_NAME = 'config/keys1.json'
 WRITE_PATH = 'output/'
+TIMELINE_PATH = WRITE_PATH + 'timelines/'
 DEFAULT_FILE_OUT = 'data.json'
 
 LOC_NYC = '-74,40,-73,41'
@@ -130,23 +131,26 @@ def trimTweets(tlRange=20, isFollowup=False, inFileName='timeline',
     Load json, go through each timeline and trim out tweets outside of range and beyond
     20
     """
+    fNamesIn = output.filenameGenerator(TIMELINE_PATH, inFileName, tlRange, '.json')
+    fNamesOut = output.filenameGenerator(TIMELINE_PATH, outFileName, tlRange, '.json')
+    followupNames = output.filenameGenerator(WRITE_PATH, idFile, tlRange, '.txt')
     tweetsSaved = 0
     index = -1
-    for i in range(0, tlRange):
+    for name in fNamesIn:
         tooNew = False
         
-        fileInName = WRITE_PATH + 'timelines/' + inFileName + str(i) + '.json'
-        fileOutName = WRITE_PATH + 'timelines/' + outFileName + str(i) + '.json'
-        followUpName = WRITE_PATH + idFile + str(i) + '.txt'
-        followUps = open(followUpName, 'w') #open file to write follow up ids to.
-        timeline = loadJson(fileInName)
+        #fileInName = WRITE_PATH + 'timelines/' + inFileName + str(i) + '.json'
+        #fileOutName = WRITE_PATH + 'timelines/' + outFileName + str(i) + '.json'
+        #followUpName = WRITE_PATH + idFile + str(i) + '.txt'
+        followUps = open(followupNames.next(), 'w') #open file to write follow up ids to.
+        timeline = loadJson(name)
         outJson = {}
         for user in timeline:
             tweetsSaved = 0
             newList = []
             for tweet in timeline[user]:
                 score = tu.dateInRange(tweet['created_at'])
-                lastID = tweet['id']
+                lastID = tweet['id_str']
                 if score < 0:
                     #last tweet too old
                     print '.',
@@ -170,7 +174,7 @@ def trimTweets(tlRange=20, isFollowup=False, inFileName='timeline',
             if tweetsSaved > 0:
                 outJson[user] = newList
             print "Saved ", len(newList)
-        output.writeJson(fileOutName, outJson)
+        output.writeJson(fNamesOut.next(), outJson)
         followUps.close()
                     
 def tweetCreatedSinceAugust(tweet):
