@@ -183,8 +183,8 @@ def tweetCreatedSinceAugust(tweet):
     year = '2016'
     return tu.tweetCreatedSince(tweet, months, year)
 
-def toCsv(path):
-    output.jsonToCsv('output/tBA0.csv', loadJson(path))
+def toCsv(pathIn='output/timelines/tBA0.json', pathOut='output/tBA0.csv'):
+    output.jsonToCsv(pathOut, loadJson(pathIn))
 
 def concatenateIDFiles(nameRange=20, inName='followUpIDs', outPath='output/followUpIDs.txt'):
     """
