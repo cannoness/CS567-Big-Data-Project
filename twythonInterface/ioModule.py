@@ -54,6 +54,14 @@ def loadJson(path):
     f.close()
     return data
 
+def tweetToDB(dbCollection, tweet):
+    """
+    Write a tweet to the db declared in dbCollection
+    @param dbCollection - A pymongo collection object
+    @param tweet - A dictionary representing a tweet .json
+    """
+    print "Put in db"
+
 class IDWriter:
     """
     This class watches a deque of twitter user ids and writes the IDs out as a 

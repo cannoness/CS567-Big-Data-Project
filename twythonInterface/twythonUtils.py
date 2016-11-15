@@ -264,9 +264,10 @@ class TimelineGrabber():
                 tweets = []
                 for tweet in timeline:
                     entry = {}
+                    entry['user_id'] = tweet['user']['id_str']#user id
                     entry['created_at'] = tweet['created_at']
                     entry['text'] = tweet['text']
-                    entry['id'] = tweet['id']
+                    entry['id_str'] = tweet['id_str']#tweet id
                     tweets.append(entry)
                 data[idStr] = tweets
             except TwythonRateLimitError as e:
