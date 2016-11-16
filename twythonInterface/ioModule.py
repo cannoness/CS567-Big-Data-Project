@@ -73,6 +73,7 @@ def tweetToDB(dbCollection, tweet):
     @param dbCollection - A pymongo collection object
     @param tweet - A dictionary representing a tweet .json
     """
+    dbCollection.insert_one(tweet)
     print "Put in db"
 
 class IDWriter:

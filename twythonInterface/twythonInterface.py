@@ -3,6 +3,7 @@ import ioModule as output
 import json, sys
 from collections import deque
 from threading import Thread
+from pymongo import MongoClient
 
 KEY_FILE_NAME = 'config/keys1.json'
 WRITE_PATH = 'output/'
@@ -258,3 +259,12 @@ def addToJson(nameIn='timelineTB', basePath='output/timelines/timelineTBig.json'
                 else:
                     baseJson[idStr] = tweetList
     output.writeJson(outPath, baseJson)
+
+def putTweetInDB(tweet):
+    """
+    This is a test method to insert a tweet, assumes a db on local host
+    """
+    client = MongoClient()
+    db = client['nyTweets']
+    collection = db['tweets']
+    output.tweetToDB(collection, tweet)
