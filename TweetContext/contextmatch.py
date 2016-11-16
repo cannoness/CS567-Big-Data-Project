@@ -6,11 +6,11 @@ tweet_count = PT = NPT = 0
 user_tweets = []
 
 #loading up the file to get comparison words from
-context_file = open(".\CS567-Big-Data-Project\TweetContext\contextwords.dat", "r")
+context_file = open("TweetContext\contextwords.dat", "r")
 context_array = context_file.read()
 context_list = [s.strip().lower() for s in context_array.splitlines()]
 context_file.close()
-
+print_out = []
 #simple 'stupid' code for comparing strings...
 jdata = json.load(open("timelineBig.json", 'r'))
 
@@ -22,6 +22,7 @@ for user in jdata:
         #for word in tweet.split(" "):
         for word in tweet['text'].split(" "):
             if word.lower() in context_list:
+                print_out.append(tweet['text'])
                 PT += 1
                 break
     user_tweets.append([PT, tweet_count])
@@ -38,3 +39,10 @@ with open(outfile, 'wb') as csvfile:
     for item in user_tweets:
         #Write item to outcsv
         writer.writerow([item[0], item[1]])
+
+outfile = 'political_tweet.csv'
+with open(outfile, 'wb') as csvfile:
+    writer = csv.writer(csvfile,  quoting=csv.QUOTE_ALL)
+    for item in print_out:
+        #Write item to outcsv
+        writer.writerow(item)
