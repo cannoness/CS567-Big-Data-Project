@@ -110,7 +110,7 @@ def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True, startFrom
 
     tlg = tu.TimelineGrabber()
     tlg.fileIn = WRITE_PATH + ids
-    tlg.fileOut = WRITE_PATH + 'timelines/' + fileOut
+    tlg.fileOut = TIMELINE_PATH + fileOut
     tlg.keyFileName = KEY_FILE_NAME
     tlg.numGrabs = startFrom
     tlg.isFollowup = isFollowup
