@@ -19,7 +19,49 @@ def startLocStream(tweetQ, loc, keyfile):
     """
     streamer = streamLogin(keyfile, tweetQ)
     streamer.statuses.filter(locations=loc)
-    
+
+def dateInRange(dateString):
+    """
+    Return true if date string is in range. Using Nov strictly less than Nov 7 to cut
+    last minute get out the vote stuff.
+    @return int isValid - if isValid is negative, tweet is too old, if positive too new
+    0 is in valid range.
+    """
+    dateArr = dateString.split()
+    isValid = -1
+    if dateArr[5] == '2016':
+        if dateArr[1] in 'AugSepOct':
+            isValid = 0
+        elif dateArr[1] == 'Nov' and int(dateArr[2]) < 7:
+
+            isValid = 0
+        else:
+            #Tweet came too late.  Flag to search farther back.
+            #save tweet id
+            isValid = 1
+    return isValid
+
+        
+def tweetCreatedSince(tweet, months, year):
+    """
+    @deprecated
+    Check if tweet was created since a user specified month.
+    @param Tweet tweet - Tweet object (json format).
+    @param String months - Month names that are valid.
+    @param String year - Year that we're looking in.
+    @return - True if tweet was created within time limit.
+    """
+    #monthString = 'AugSepOctNovDec'
+    #yearString = '2016'
+    tweetDate = tweet['created_at']
+    dateArr = tweetDate.split()
+    isValid = False
+    if dateArr[1] in months and dateArr[5] == year:
+        isValid = True
+
+    return isValid
+    #return is valid since
+
 #********* Login functions**********************************************************
 # Use streamLogin to use TwythonStreamer.
 # Use searchLogin to perform a search.
@@ -76,6 +118,7 @@ def searchLogin(KEY_FILE_NAME):
     return Twython(keyFile[CONSUMER_KEY], access_token=keyFile[ACCESS_TOKEN])
 
 #***********************Begin Classes**************************************************
+
 
 #****My Streamer******************
 class MyStreamer(TwythonStreamer):
@@ -154,6 +197,7 @@ class TimelineGrabber():
         self.fileOut = None
         self.keyFileName = None
         self.isTesting = True
+        self.isFollowup = False
 
     def startTimer(self):
         """
@@ -185,8 +229,8 @@ class TimelineGrabber():
             f.readline()
         #make list of user ids to get timelines from.    
         for _ in xrange(self.usersPerGrab):
-            usrID = f.readline().rstrip()
-            if usrID != "":
+            usrID = f.readline().split()
+            if len(usrID) != 0:
                 ids.append(usrID)
             else:
                 print "End of id file"
@@ -199,15 +243,33 @@ class TimelineGrabber():
         Will return data as a list of timelines.
         @param ls list of strings to get user timeline from.
         """
-        data = []
+        data = {}
         print "Getting timelines for ", len(ls), " users."
         for user in ls:
             try:
-                timeline = twitter.get_user_timeline(user_id=user, count=self.tweetsPerUser)
+                idStr=user[0]
+                #If this is a followup, call api with max_id set
+                if self.isFollowup:
+                    if len(user) >= 2:
+                        timeline = twitter.get_user_timeline(user_id=idStr,
+                                                             count = self.tweetsPerUser,
+                                                             trim_user=True,
+                                                             max_id=user[1])
+                    else:
+                        print "User did not have max_id"
+                else:
+                    timeline = twitter.get_user_timeline(user_id=idStr,
+                                                     count=self.tweetsPerUser,
+                                                     trim_user=True)
                 tweets = []
                 for tweet in timeline:
-                    tweets.append(tweet)
-                data.append(tweets)
+                    entry = {}
+                    entry['user_id'] = tweet['user']['id_str']#user id
+                    entry['created_at'] = tweet['created_at']
+                    entry['text'] = tweet['text']
+                    entry['id_str'] = tweet['id_str']#tweet id
+                    tweets.append(entry)
+                data[idStr] = tweets
             except TwythonRateLimitError as e:
                 #This occurs when a rate limit error is thrown.
                 #at this point, the program steps out of the loop and resumes pickup on
