@@ -1,0 +1,18 @@
+Vanessa Job - November 17, 2016
+
+The output is in USATweets.user-id_str.id_str.  
+
+The program used to get the output is in ourgetUSATweets.py.   I ran it from moons.cs.unm.edu and it had no problem getting to the
+database. 
+
+The less elegant javascript version is in command.js.  To use it, get on moons and then type
+
+ mongo mongodb.cs.unm.edu:27017/qrgroupdb -u vanessa -p job < command.js > m_output
+
+This runs the mongo shell using input commands from command.js.  The output is redirected to m_output. 
+
+
+
+
+
+
