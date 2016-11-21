@@ -4,6 +4,7 @@ from collections import deque
 from threading import Thread
 from threading import Timer
 import ioModule as output
+import dataManipulators as dManip
 import json, sys, time
 
 
@@ -24,8 +25,19 @@ def dateInRange(dateString):
     """
     Return true if date string is in range. Using Nov strictly less than Nov 7 to cut
     last minute get out the vote stuff.
-    @return int isValid - if isValid is negative, tweet is too old, if positive too new
+    @param String dateString - A string representation of an integer representing the date.
+    @return int isValid - if isValid is negative, tweet is too old, if positive too new.
     0 is in valid range.
+    """
+    dateMin = 20160801
+    dateMax = 20161107
+    tweetDate = int(dateString)
+    if tweetDate < dateMin:
+        return -1
+    elif tweetDate > dateMax:
+        return 1
+    else:
+        return 0
     """
     dateArr = dateString.split()
     isValid = -1
@@ -40,6 +52,7 @@ def dateInRange(dateString):
             #save tweet id
             isValid = 1
     return isValid
+    """
 
         
 def tweetCreatedSince(tweet, months, year):
@@ -265,7 +278,7 @@ class TimelineGrabber():
                 for tweet in timeline:
                     entry = {}
                     entry['user_id'] = tweet['user']['id_str']#user id
-                    entry['created_at'] = tweet['created_at']
+                    entry['created_at'] = dManip.tweetDateToInt(tweet['created_at'])
                     entry['text'] = tweet['text']
                     entry['id_str'] = tweet['id_str']#tweet id
                     tweets.append(entry)
