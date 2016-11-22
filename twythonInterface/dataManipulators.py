@@ -19,8 +19,9 @@ def tweetDateToInt(dateString):
 
     dateArr = dateString.split()
 
-    dateAsNum = dateArr[I_YEAR] * 10,000
-    dateAsNum = dateAsNum + dateArr[I_MONTH] * 100
-    dateAsNum = dateAsNum + dateArr[I_DAY]
+    dateAsNum = int(dateArr[I_YEAR]) * 10000
+    m = dateArr[I_MONTH]
+    dateAsNum = MONTHS[m] * 100 + dateAsNum
+    dateAsNum = int(dateArr[I_DAY]) + dateAsNum
 
     return dateAsNum
