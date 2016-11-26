@@ -3,8 +3,8 @@ ids = {}
 lineCount = long(0)
 uniqueCount = long(0)
 
-bigIDFile = 'output/trump.output'
-smallIDFile = 'output/trumpIDShort.txt'
+bigIDFile = 'output/clinton.output'
+smallIDFile = 'output/clintonIDShort.txt'
 
 with open(bigIDFile, 'r') as fp:
     for line in fp:

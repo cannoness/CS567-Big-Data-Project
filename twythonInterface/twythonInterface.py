@@ -1,6 +1,6 @@
 import twythonUtils as tu
 import ioModule as output
-import json, sys
+import json, sys, csv
 from collections import deque
 from threading import Thread
 from pymongo import MongoClient
@@ -131,6 +131,11 @@ def trimTweets(tlRange=20, isFollowup=False, inFileName='timeline',
     """
     Load json, go through each timeline and trim out tweets outside of range and beyond
     20
+    @param int tlRange File number limit (exclusive)
+    @param boolean isFollowup Deprecated
+    @param String inFileName base timeline in file name
+    @param String outFileName base timeline out file name
+    @param String idFile Name of file to print follow up ids to
     """
     fNamesIn = output.filenameGenerator(TIMELINE_PATH, inFileName, tlRange, '.json')
     fNamesOut = output.filenameGenerator(TIMELINE_PATH, outFileName, tlRange, '.json')
@@ -188,13 +193,29 @@ def tweetCreatedSinceAugust(tweet):
     year = '2016'
     return tu.tweetCreatedSince(tweet, months, year)
 
+def timelinesToCsv(tlRange=20, nameIn='timeline', nameOut='timelines.csv'):
+    fOut = open(WRITE_PATH + nameOut, 'w')
+    writer = csv.writer(fOut)
+    fNamesIn = output.filenameGenerator(TIMELINE_PATH, nameIn, tlRange, '.json')
+    for fileName in fNamesIn:
+        jsonObj = loadJson(fileName)
+        for user in jsonObj:
+            for tweet in jsonObj[user]:
+                userId = user
+                date = tweet['created_at']
+                txt = output.cleanText(tweet['text'])
+                writer.writerow((userId, date, txt))
+    fOut.close()
+
+
+    
 def toCsv(pathIn='output/timelines/tBA0.json', pathOut='output/tBA0.csv'):
     output.jsonToCsv(pathOut, loadJson(pathIn))
 
 def concatenateIDFiles(nameRange=20, inName='followUpIDs', outPath='output/followUpIDs.txt'):
     """
     Concatenate followup id files
-    @param int nameRange - Maximum range of file numbers (exclusive) default 20
+    @paramo int nameRange - Maximum range of file numbers (exclusive) default 20
     """
     with open(outPath, 'w') as outFile:
         for i in range(0, nameRange):
