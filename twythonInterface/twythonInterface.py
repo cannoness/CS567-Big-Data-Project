@@ -137,9 +137,9 @@ def trimTweets(tlRange=20, isFollowup=False, inFileName='timeline',
     @param String outFileName base timeline out file name
     @param String idFile Name of file to print follow up ids to
     """
-    fNamesIn = output.filenameGenerator(TIMELINE_PATH, inFileName, tlRange, '.json')
-    fNamesOut = output.filenameGenerator(TIMELINE_PATH, outFileName, tlRange, '.json')
-    followupNames = output.filenameGenerator(WRITE_PATH, idFile, tlRange, '.txt')
+    fNamesIn = output.filenameGenerator(TIMELINE_PATH, inFileName, 0, tlRange, '.json')
+    fNamesOut = output.filenameGenerator(TIMELINE_PATH, outFileName, 0, tlRange, '.json')
+    followupNames = output.filenameGenerator(WRITE_PATH, idFile, 0, tlRange, '.txt')
     tweetsSaved = 0
     index = -1
     for name in fNamesIn:
@@ -196,7 +196,7 @@ def tweetCreatedSinceAugust(tweet):
 def timelinesToCsv(tlRange=20, nameIn='timeline', nameOut='timelines.csv'):
     fOut = open(WRITE_PATH + nameOut, 'w')
     writer = csv.writer(fOut)
-    fNamesIn = output.filenameGenerator(TIMELINE_PATH, nameIn, tlRange, '.json')
+    fNamesIn = output.filenameGenerator(TIMELINE_PATH, nameIn, 0, tlRange, '.json')
     for fileName in fNamesIn:
         jsonObj = loadJson(fileName)
         for user in jsonObj:

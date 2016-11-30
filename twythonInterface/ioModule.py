@@ -4,17 +4,18 @@ import json, sys, csv, re
 #
 #Contains methods for reading and writing to disk.
 #
-def filenameGenerator(path, name, N, extension):
+def filenameGenerator(path, name, n, N, extension, 0):
     """
     TODO use me!
     Creates a generator that streams a series of file names of the form:
     'path/<name><number><extension>'
     @param String path - the path portion of the desired file name.
     @param String name - the base name of the desired output file (no number, no extension).
+    @param int n - Starting index to use.
     @param int N - Range of filenames to create from [0, N)
     @param String extension - String representing the file extension to use.
     """
-    for i in range(N):
+    for i in range(n, N):
         yield path + name + str(i) + extension
 
 def cleanText(txt):
