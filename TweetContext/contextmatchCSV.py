@@ -28,17 +28,22 @@ with open('tweetfile.csv', 'rb') as csvfile:
             last_user = current_user
             first = False
         else:
-            user_tweets.append([PT, tweet_count])
+            user_tweets.append([last_user, PT, tweet_count])
             PT = tweet_count = 0
-            first = True
-
+            for word in row[2].split(" "):
+                if word.lower() in context_list:
+                    print_out.append([current_user,row[2]])
+                    PT += 1
+                    break
+            last_user = current_user
+            
 #k now save that shiz
 outfile = 'political_data.csv'
 with open(outfile, 'wb') as csvfile:
     writer = csv.writer(csvfile,  quoting=csv.QUOTE_ALL)
     for item in user_tweets:
         #Write item to outcsv
-        writer.writerow([item[0], item[1]])
+        writer.writerow([item[0], item[1],item[2]])
 		
 outfile = 'political_tweet.csv'
 with open(outfile, 'wb') as csvfile:
