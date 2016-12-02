@@ -3,7 +3,6 @@ from pyspark.mllib.feature import HashingTF, IDF
 from pyspark.mllib.regression import LabeledPoint
 from pyspark.mllib.classification import NaiveBayes   
 import csv
-import random 
 
 sc = SparkContext()
 training_set = []
@@ -66,5 +65,5 @@ with open(outfile, 'wb') as csvfile:
         #Write item to outcsv
         writer.writerow([item['user'],item['predicted']])
 
-print 'idk why this wont work' + str(test.collect())
+print str(test.collect())
 print '\n\n\n\n\n\n\n\n\n\n\n\n\n'
