@@ -15,7 +15,8 @@ merged = passion.merge(sent, on = 'user')
 merged = merged.drop(merged[merged['p'] == 0].index)
 f_o = merged.drop_duplicates(subset='user', keep='first')
 user_sent_first_only = f_o.values.tolist()
-full_list = merged.values.tolist()
+f_l = merged.drop_duplicates(subset='user', keep='first')
+full_list = f_l.values.tolist()
 
 #user_sent_averaged = []
 #clinton = trump = 0
