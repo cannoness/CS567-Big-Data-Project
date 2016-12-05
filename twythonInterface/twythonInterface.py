@@ -126,7 +126,7 @@ def grabTimelines(ids='uniqueN.txt', fileOut='timeline', testing=True, startFrom
     
     tlg.startTimer()
 
-def trimTweets(tlRange=20, isFollowup=False, inFileName='timeline',
+def trimTweets(tlStart=0, tlRange=20, isFollowup=False, inFileName='timeline',
                outFileName='timelineT', idFile='followUpIDs'):
     """
     Load json, go through each timeline and trim out tweets outside of range and beyond
@@ -137,9 +137,9 @@ def trimTweets(tlRange=20, isFollowup=False, inFileName='timeline',
     @param String outFileName base timeline out file name
     @param String idFile Name of file to print follow up ids to
     """
-    fNamesIn = output.filenameGenerator(TIMELINE_PATH, inFileName, 0, tlRange, '.json')
-    fNamesOut = output.filenameGenerator(TIMELINE_PATH, outFileName, 0, tlRange, '.json')
-    followupNames = output.filenameGenerator(WRITE_PATH, idFile, 0, tlRange, '.txt')
+    fNamesIn = output.filenameGenerator(TIMELINE_PATH, inFileName, tlStart, tlRange, '.json')
+    fNamesOut = output.filenameGenerator(TIMELINE_PATH, outFileName, tlStart, tlRange, '.json')
+    followupNames = output.filenameGenerator(WRITE_PATH, idFile, tlStart, tlRange, '.txt')
     tweetsSaved = 0
     index = -1
     for name in fNamesIn:
