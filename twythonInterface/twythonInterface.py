@@ -212,13 +212,13 @@ def timelinesToCsv(tlRange=20, nameIn='timeline', nameOut='timelines.csv'):
 def toCsv(pathIn='output/timelines/tBA0.json', pathOut='output/tBA0.csv'):
     output.jsonToCsv(pathOut, loadJson(pathIn))
 
-def concatenateIDFiles(nameRange=20, inName='followUpIDs', outPath='output/followUpIDs.txt'):
+def concatenateIDFiles(nameStart=0, nameRange=20, inName='followUpIDs', outPath='output/followUpIDs.txt'):
     """
     Concatenate followup id files
     @paramo int nameRange - Maximum range of file numbers (exclusive) default 20
     """
     with open(outPath, 'w') as outFile:
-        for i in range(0, nameRange):
+        for i in range(nameStart, nameRange):
             fileName = 'output/' + inName + str(i) + '.txt'
             print fileName
             with open(fileName, 'r') as inFile:
