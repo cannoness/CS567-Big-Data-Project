@@ -1,3 +1,11 @@
+'''
+References used for this code:
+https://chimpler.wordpress.com/2014/06/11/classifiying-documents-using-naive-bayes-on-apache-spark-mllib/
+http://stackoverflow.com/questions/32231049/how-to-use-spark-naive-bayes-classifier-for-text-classification-with-idf
+http://spark.apache.org/docs/latest/mllib-naive-bayes.html
+http://stackoverflow.com/questions/31898964/how-to-write-the-resulting-rdd-to-a-csv-file-in-spark-python
+'''
+
 from pyspark import SparkContext
 from pyspark.mllib.feature import HashingTF, IDF
 from pyspark.mllib.regression import LabeledPoint
@@ -55,7 +63,7 @@ testing = labels2.zip(tfidf1).map(lambda x: LabeledPoint(x[0], x[1]))
 
 
 #test = model.predict(tfidf1)
-test = labels2.zip(model.predict(tfidf1)).map(lambda x: { "user":x[0],"predicted": float(x[1])})
+test = labels2.zip(model.predict(tfidf1)).map(lambda x: { "user":x[0],"sentiment": float(x[1])})
 
 
 outfile = 'out.csv'
@@ -63,7 +71,7 @@ with open(outfile, 'wb') as csvfile:
     writer = csv.writer(csvfile,  quoting=csv.QUOTE_ALL)
     for item in test.collect():
         #Write item to outcsv
-        writer.writerow([item['user'],item['predicted']])
+        writer.writerow([item['user'],item['sentiment']])
 
 print str(test.collect())
 print '\n\n\n\n\n\n\n\n\n\n\n\n\n'
